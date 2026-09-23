@@ -1,0 +1,14 @@
+{
+  "name": "playwright-navigation-topic-05",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 5 - Navigation: page navigation, back/forward, multiple tabs, popups",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

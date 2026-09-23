@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Home — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin: 14px 0; }
+    button { padding: 8px 14px; cursor: pointer; margin: 4px; }
+    button.primary { background: #2c7be5; color: white; border: none; }
+    #page-name { color: #2c7be5; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Home</h1>
+  <p data-page="home">You are on the <span id="page-name">home</span> page.</p>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="products.html">Products</a>
+    <a href="help.html" target="_blank" rel="noopener">Help (new tab)</a>
+  </nav>
+
+  <div class="box">
+    <h2>Open a popup window</h2>
+    <button id="open-popup" class="primary" type="button">Open order summary</button>
+    <p class="muted">Uses window.open → new tab / popup.</p>
+  </div>
+
+  <div class="box">
+    <h2>Same-tab navigation (for back / forward)</h2>
+    <p>Click About, then Contact — then use browser back/forward in tests.</p>
+    <a href="about.html" id="go-about">Go to About</a>
+  </div>
+
+  <script>
+    document.getElementById('open-popup').addEventListener('click', () => {
+      window.open('help.html', 'orderSummary', 'width=520,height=420');
+    });
+  </script>
+</body>
+</html>

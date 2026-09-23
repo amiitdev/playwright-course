@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Help / Order summary — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 520px; }
+    .box { border: 1px solid #2c7be5; border-radius: 8px; padding: 14px; background: #eaf2ff; }
+    #page-name { color: #2c7be5; font-weight: bold; }
+    button { padding: 8px 14px; cursor: pointer; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Order summary</h1>
+  <p data-page="help">This opened as a <span id="page-name">popup / new tab</span>.</p>
+
+  <div class="box">
+    <p><strong>Items:</strong> Apple ×1, Banana ×2</p>
+    <p><strong>Total:</strong> $5</p>
+  </div>
+
+  <button id="close-me" type="button">Close window</button>
+
+  <script>
+    document.getElementById('close-me').addEventListener('click', () => {
+      window.close();
+    });
+  </script>
+</body>
+</html>

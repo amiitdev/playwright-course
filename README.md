@@ -17,9 +17,10 @@ One topic at a time. Each topic has:
 | 2 | [Locators](./topic-02-locators/README.md) | `topic-02-locators/` | ✅ Done |
 | 3 | [User Actions](./topic-03-user-actions/README.md) | `topic-03-user-actions/` | ✅ Done |
 | 4 | [Waiting & Synchronization](./topic-04-waiting/README.md) | `topic-04-waiting/` | ✅ Done |
-| 5 | Page Object Model (coming soon) | `topic-05-pom/` | ⏳ |
-| 6 | Fixtures & Hooks (coming soon) | `topic-06-fixtures/` | ⏳ |
-| 7 | CI/CD with GitHub Actions (coming soon) | `topic-07-cicd/` | ⏳ |
+| 5 | [Navigation](./topic-05-navigation/README.md) | `topic-05-navigation/` | ✅ Done |
+| 6 | Page Object Model (coming soon) | `topic-06-pom/` | ⏳ |
+| 7 | Fixtures & Hooks (coming soon) | `topic-07-fixtures/` | ⏳ |
+| 8 | CI/CD with GitHub Actions (coming soon) | `topic-08-cicd/` | ⏳ |
 
 ---
 
@@ -91,6 +92,13 @@ npx playwright install chromium
 npx playwright test
 ```
 
+```bash
+cd topic-05-navigation
+npm install
+npx playwright install chromium
+npx playwright test
+```
+
 ---
 
-*Last updated: Topic 4 — Waiting & Synchronization (25 passed)*
+*Last updated: Topic 5 — Navigation (21 passed)*
