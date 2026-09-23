@@ -20,7 +20,7 @@ One topic at a time. Each topic has:
 | 5 | [Navigation](./topic-05-navigation/README.md) | `topic-05-navigation/` | ✅ Done |
 | 6 | [Assertions](./topic-06-assertions/README.md) | `topic-06-assertions/` | ✅ Done |
 | 7 | [Test Organization](./topic-07-organization/README.md) | `topic-07-organization/` | ✅ Done |
-| 8 | Page Object Model (coming soon) | `topic-08-pom/` | ⏳ |
+| 8 | [Page Object Model](./topic-08-pom/README.md) | `topic-08-pom/` | ✅ Done |
 | 9 | CI/CD with GitHub Actions (coming soon) | `topic-09-cicd/` | ⏳ |
 
 ---
@@ -115,6 +115,13 @@ npx playwright test
 npx playwright test --grep @smoke
 ```
 
+```bash
+cd topic-08-pom
+npm install
+npx playwright install chromium
+npx playwright test
+```
+
 ---
 
-*Last updated: Topic 7 — Test Organization (28 passed · 4 smoke · 3 regression)*
+*Last updated: Topic 8 — Page Object Model (16 passed · 3 smoke)*

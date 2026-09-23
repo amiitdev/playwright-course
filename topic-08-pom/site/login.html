@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; max-width: 320px; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 8px 16px; cursor: pointer; }
+    #error { color: #c0392b; display: none; font-weight: bold; }
+    .muted { color: #777; }
+  </style>
+</head>
+<body>
+  <h1>Login</h1>
+  <p class="muted">Demo: any email + password works.</p>
+
+  <form id="login-form" novalidate>
+    <!-- novalidate: let our JS show #error (browser type=email would block submit) -->
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" placeholder="you@example.com" />
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" placeholder="Password" />
+
+    <p id="error" data-testid="login-error">Invalid email or password</p>
+    <button id="login-btn" type="submit">Sign in</button>
+  </form>
+
+  <p><a href="index.html" data-testid="back-home">← Back to home</a></p>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const pass = document.getElementById('password').value;
+      const error = document.getElementById('error');
+
+      if (!email.includes('@') || pass.length < 4) {
+        error.style.display = 'block';
+        return;
+      }
+      error.style.display = 'none';
+      localStorage.setItem('email', email);
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

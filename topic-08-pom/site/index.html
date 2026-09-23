@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Home — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .product {
+      border: 1px solid #ccc; border-radius: 8px;
+      padding: 12px; margin: 12px 0;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    button { padding: 6px 12px; cursor: pointer; }
+    button.primary { background: #2c7be5; color: white; border: none; }
+    #cart-count { font-weight: bold; color: #c0392b; }
+    #search { padding: 8px; width: 240px; }
+    #search-result { color: #12a150; display: none; }
+  </style>
+</head>
+<body>
+  <h1>Shopping App</h1>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="login.html">Login</a>
+    <a href="dashboard.html">Dashboard</a>
+  </nav>
+
+  <div class="box" style="margin-top:16px">
+    <label for="search">Search products</label>
+    <input id="search" type="text" placeholder="Type fruit name" />
+    <button id="search-btn" class="primary" type="button">Search</button>
+    <p id="search-result" data-testid="search-result"></p>
+  </div>
+
+  <div class="product" data-sku="APPLE">
+    <div>
+      <strong>Apple</strong> — $1
+      <div class="muted">Fresh red apples</div>
+    </div>
+    <button class="add-btn" data-sku="APPLE" type="button">Add to cart</button>
+  </div>
+
+  <div class="product" data-sku="BANANA">
+    <div>
+      <strong>Banana</strong> — $2
+      <div class="muted">Ripe yellow bananas</div>
+    </div>
+    <button class="add-btn" data-sku="BANANA" type="button">Add to cart</button>
+  </div>
+
+  <div class="product" data-sku="MANGO">
+    <div>
+      <strong>Mango</strong> — $3
+      <div class="muted">Sweet mangoes</div>
+    </div>
+    <button class="add-btn" data-sku="MANGO" type="button">Add to cart</button>
+  </div>
+
+  <p id="cart-count">Cart: 0</p>
+
+  <script>
+    let cart = 0;
+    document.querySelectorAll('.add-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        cart += 1;
+        document.getElementById('cart-count').textContent = 'Cart: ' + cart;
+      });
+    });
+
+    document.getElementById('search-btn').addEventListener('click', () => {
+      const q = document.getElementById('search').value.trim().toLowerCase();
+      const box = document.getElementById('search-result');
+      const products = ['apple', 'banana', 'mango'];
+      if (!q) {
+        box.style.display = 'none';
+        return;
+      }
+      const found = products.filter((p) => p.includes(q));
+      box.style.display = 'block';
+      box.textContent = found.length
+        ? 'Found: ' + found.join(', ')
+        : 'No results for ' + q;
+    });
+  </script>
+</body>
+</html>
