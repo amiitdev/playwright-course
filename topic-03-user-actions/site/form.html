@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Checkout Form — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 420px; }
+    label { display: block; margin-top: 14px; font-weight: bold; }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+      width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box;
+    }
+    .check-row { margin-top: 8px; font-weight: normal; }
+    .check-row label { display: inline; margin-top: 0; font-weight: normal; }
+    button { margin-top: 18px; padding: 8px 16px; cursor: pointer; }
+    #result { color: #12a150; font-weight: bold; margin-top: 12px; }
+    #file-name { color: #2c7be5; }
+  </style>
+</head>
+<body>
+  <h1>Checkout Form</h1>
+  <p>Practice fill · type · select · checkbox · radio · upload</p>
+
+  <form id="order-form">
+    <!-- ===== FILL vs TYPE ===== -->
+    <label for="fullname">Full name</label>
+    <input id="fullname" name="fullname" type="text" placeholder="Amit Kumar" />
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" placeholder="you@example.com" />
+
+    <label for="notes">Notes (for keyboard Tab)</label>
+    <input id="notes" name="notes" type="text" placeholder="Optional notes" />
+
+    <!-- ===== SELECT DROPDOWN ===== -->
+    <label for="fruit">Choose a fruit</label>
+    <select id="fruit" name="fruit">
+      <option value="">-- select --</option>
+      <option value="apple">Apple</option>
+      <option value="banana">Banana</option>
+      <option value="mango">Mango</option>
+      <option value="papaya">Papaya</option>
+    </select>
+
+    <!-- ===== CHECKBOXES ===== -->
+    <label>Extras (checkboxes)</label>
+    <div class="check-row">
+      <input type="checkbox" id="extra-cream" name="extra" value="cream" />
+      <label for="extra-cream">Extra cream</label>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="extra-nuts" name="extra" value="nuts" />
+      <label for="extra-nuts">Add nuts</label>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="extra-sugar" name="extra" value="sugar" checked />
+      <label for="extra-sugar">Sugar (already checked)</label>
+    </div>
+
+    <!-- ===== RADIO BUTTONS ===== -->
+    <label>Delivery speed (radio)</label>
+    <div class="check-row">
+      <input type="radio" id="ship-standard" name="shipping" value="standard" checked />
+      <label for="ship-standard">Standard (3-5 days)</label>
+    </div>
+    <div class="check-row">
+      <input type="radio" id="ship-express" name="shipping" value="express" />
+      <label for="ship-express">Express (1 day)</label>
+    </div>
+
+    <!-- ===== FILE UPLOAD ===== -->
+    <label for="receipt">Upload receipt (optional)</label>
+    <input id="receipt" name="receipt" type="file" />
+
+    <button type="submit" class="primary">Place order</button>
+    <p id="result"></p>
+  </form>
+
+  <p><a href="index.html">← Back to Home</a></p>
+
+  <script>
+    document.getElementById('order-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('fullname').value;
+      const fruit = document.getElementById('fruit').value;
+      const files = document.getElementById('receipt').files;
+      const fileText = files.length ? ' + file: ' + files[0].name : '';
+      document.getElementById('result').textContent =
+        'Order OK for ' + (name || 'guest') +
+        (fruit ? ' (' + fruit + ')' : '') +
+        fileText;
+    });
+
+    document.getElementById('receipt').addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (f) document.getElementById('file-name') && (document.getElementById('file-name').textContent = f.name);
+    });
+  </script>
+</body>
+</html>

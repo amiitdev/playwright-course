@@ -1,0 +1,14 @@
+{
+  "name": "playwright-user-actions-topic-03",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 3 - User Actions: click, fill, type, select, checkbox, radio, file upload, keyboard",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

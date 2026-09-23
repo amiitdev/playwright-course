@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    button { padding: 8px 14px; cursor: pointer; margin: 4px; }
+    button.primary { background: #2c7be5; color: white; border: none; }
+    .box {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 14px 0;
+    }
+    .hidden-msg { display: none; color: #12a150; font-weight: bold; }
+    .status { color: #777; }
+    kbd {
+      background: #eee; border: 1px solid #ccc; border-radius: 4px;
+      padding: 1px 6px; font-size: 14px;
+    }
+    #counter { font-size: 24px; font-weight: bold; }
+    #search-result { color: #2c7be5; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Welcome Amit</h1>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="form.html">Checkout Form</a>
+  </nav>
+
+  <!-- ===== CLICK demos ===== -->
+  <div class="box">
+    <h2>Click actions</h2>
+    <button id="buy-btn" class="primary" type="button">Buy now</button>
+    <p id="buy-msg" class="hidden-msg">Thanks! Your order was placed.</p>
+    <p class="status">Status: <span id="status-text">idle</span></p>
+
+    <button id="double-btn" type="button">Double click me</button>
+    <p id="double-count">Double clicks: 0</p>
+  </div>
+
+  <!-- ===== TYPE / KEYBOARD demos ===== -->
+  <div class="box">
+    <h2>Keyboard actions</h2>
+    <label for="search">Search</label>
+    <input id="search" type="text" placeholder="Type a fruit and press Enter" />
+    <button id="search-btn" type="button">Search</button>
+    <p id="search-result"></p>
+
+    <p class="status">Press keys:</p>
+    <p>
+      <kbd>Enter</kbd> submit search ·
+      <kbd>Tab</kbd> move to next field ·
+      <kbd>Escape</kbd> clear message
+    </p>
+    <p id="last-key">Last key: none</p>
+  </div>
+
+  <p><a href="form.html">Go to Checkout Form →</a></p>
+
+  <script>
+    // Buy button — click shows message
+    document.getElementById('buy-btn').addEventListener('click', () => {
+      document.getElementById('buy-msg').classList.remove('hidden-msg');
+      document.getElementById('status-text').textContent = 'ordered';
+    });
+
+    // Double click counter
+    let dbl = 0;
+    document.getElementById('double-btn').addEventListener('dblclick', () => {
+      dbl += 1;
+      document.getElementById('double-count').textContent = 'Double clicks: ' + dbl;
+    });
+
+    // Search — Enter key or button click
+    function doSearch() {
+      const q = document.getElementById('search').value.trim();
+      document.getElementById('search-result').textContent =
+        q ? 'Found: ' + q : 'Please type something';
+    }
+    document.getElementById('search-btn').addEventListener('click', doSearch);
+    document.getElementById('search').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        doSearch();
+        document.getElementById('last-key').textContent = 'Last key: Enter';
+      }
+      if (e.key === 'Escape') {
+        document.getElementById('search-result').textContent = '';
+        document.getElementById('last-key').textContent = 'Last key: Escape';
+      }
+    });
+    document.getElementById('search').addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        document.getElementById('last-key').textContent = 'Last key: Tab';
+      }
+    });
+  </script>
+</body>
+</html>

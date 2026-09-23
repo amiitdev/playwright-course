@@ -15,7 +15,7 @@ One topic at a time. Each topic has:
 |---|-------|--------|--------|
 | 1 | [Playwright Basics](./topic-01-playwright-basics/README.md) | `topic-01-playwright-basics/` | ✅ Done |
 | 2 | [Locators](./topic-02-locators/README.md) | `topic-02-locators/` | ✅ Done |
-| 3 | Waiting & Auto-wait (coming soon) | `topic-03-waiting/` | ⏳ |
+| 3 | [User Actions](./topic-03-user-actions/README.md) | `topic-03-user-actions/` | ✅ Done |
 | 4 | Page Object Model (coming soon) | `topic-04-pom/` | ⏳ |
 | 5 | Fixtures & Hooks (coming soon) | `topic-05-fixtures/` | ⏳ |
 | 6 | CI/CD with GitHub Actions (coming soon) | `topic-06-cicd/` | ⏳ |
@@ -76,6 +76,13 @@ npx playwright install chromium
 npx playwright test
 ```
 
+```bash
+cd topic-03-user-actions
+npm install
+npx playwright install chromium
+npx playwright test
+```
+
 ---
 
-*Last updated: Topic 2 — Locators (30 passed)*
+*Last updated: Topic 3 — User Actions (35 passed)*
