@@ -1,10 +1,10 @@
 # Topic 1 — Playwright Basics
 
-> **Goal of this topic:** understand what Playwright is, how to install it, how a project is structured, how to run tests, the test file syntax, and how assertions (`expect`) work.
+> **Goal:** install Playwright, understand project structure, run tests, learn test syntax, and learn every assertion (`expect`) with **one simple Shopping App** — no confusing websites.
 
-**Language: modern ES6 JavaScript** (`import` / `export` — no `require`)
+**Language:** modern **ES6 JavaScript** (`import` / `export`)
 
-**Real result from my machine:** `11 passed (3.6s)` ✅
+**Real result from my machine:** `15 passed (3.3s)` ✅
 
 ---
 
@@ -12,123 +12,155 @@
 
 1. [What is Playwright?](#1-what-is-playwright)
 2. [ES6 in this course](#2-es6-in-this-course)
-3. [Installation](#3-installation)
-4. [Project Structure](#4-project-structure)
-5. [How a Test Runs (flow diagram)](#5-how-a-test-runs-flow-diagram)
-6. [Running Tests](#6-running-tests)
-7. [Test Files and Syntax](#7-test-files-and-syntax)
-8. [Assertions (expect)](#8-assertions-expect)
-9. [What a Failing Test Looks Like](#9-what-a-failing-test-looks-like)
-10. [Command Cheat Sheet](#10-command-cheat-sheet)
-11. [Real Full Output](#11-real-full-output)
+3. [Our simple website: Shopping App](#3-our-simple-website-shopping-app)
+4. [Installation](#4-installation)
+5. [Project structure](#5-project-structure)
+6. [How a test runs](#6-how-a-test-runs)
+7. [Running tests](#7-running-tests)
+8. [Test files and syntax](#8-test-files-and-syntax)
+9. [Assertions (expect) — matcher by matcher](#9-assertions-expect--matcher-by-matcher)
+10. [Real login example](#10-real-login-example)
+11. [What a failing test looks like (real)](#11-what-a-failing-test-looks-like-real)
+12. [Which matcher should I use?](#12-which-matcher-should-i-use)
+13. [Command cheat sheet](#13-command-cheat-sheet)
+14. [Real full output](#14-real-full-output)
 
 ---
 
 ## 1. What is Playwright?
 
 ```text
-  You write a test (JavaScript / ES6)
+  You write a test (JavaScript)
             |
             v
-  Playwright opens a real browser (Chromium)
+  Playwright opens a real browser
             |
             v
-  Browser visits your URL, clicks, types, reads page
+  Browser opens YOUR page (here: our Shopping App)
             |
             v
-  expect(...) checks if result is correct
+  expect(...) checks if something is true
             |
-            +---- PASS --> green check ✓
-            |
-            +---- FAIL --> red cross  ✘  (+ reason)
+            +---- yes --> PASS  ✓
+            +---- no  --> FAIL  ✘  (shows Expected vs Received)
 ```
 
-**In one line:** Playwright is a tool that **drives a real browser** and **checks the results** automatically.
-
-Why Playwright?
-
-| Feature | Meaning in simple words |
-|---------|-------------------------|
-| Real browser | Not a simulation — actual Chromium/Firefox/WebKit |
-| Auto-wait | Playwright waits for elements by itself, no manual sleeps |
-| One language | Tests written in **ES6 JavaScript** (this course) |
-| Free & open | Made by Microsoft, no license cost |
+**In one line:** Playwright **opens a page** and **checks things** for you.
 
 ---
 
 ## 2. ES6 in this course
 
-Every file in this course uses **modern ES6 modules**.
+Every file uses modern ES6 modules.
 
-| Old way (CommonJS) | New way (ES6 — WE USE THIS) |
-|--------------------|-----------------------------|
-| `const { test } = require('@playwright/test')` | `import { test } from '@playwright/test'` |
+| Old way (we do NOT use) | New way (we USE this) |
+|-------------------------|------------------------|
+| `const { test } = require(...)` | `import { test } from '...'` |
 | `module.exports = config` | `export default config` |
-| file-level scope tricks | real standard, works in browser + Node |
 
-**One switch makes Node use ES6** — in `package.json`:
+Enabled by this one line in `package.json`:
 
 ```json
 "type": "module"
 ```
 
-```text
-  "type": "module"  in package.json
-         |
-         +-->  Node treats every .js file as an ES6 module
-         |
-         +-->  import / export work everywhere in this project
-```
-
-**Rule for this course:**
-
 ```js
-// ✅ DO (ES6)
+// ✅ always this
 import { test, expect } from '@playwright/test';
-export default defineConfig({ ... });
 
-// ❌ DON'T (CommonJS — not used in this course)
+// ❌ never this
 const { test, expect } = require('@playwright/test');
-module.exports = { ... };
 ```
 
 ---
 
-## 3. Installation
+## 3. Our simple website: Shopping App
 
-### 3.1 Prerequisites (already on your machine)
+Forget `example.com`. We test **our own tiny local website** in `site/`.
 
-```bash
-node --version    # need Node.js
-npm --version     # need npm
+### Home page — `site/index.html`
+
+```html
+<title>Shopping App</title>
+
+<h1>Welcome Amit</h1>
+
+<p>Your order has been placed successfully.</p>
+
+<ul>
+  <li>Apple</li>
+  <li>Banana</li>
+</ul>
+
+<div class="hidden-secret" style="display:none">
+  Secret Admin Panel
+</div>
+
+<a href="login.html">Go to Login Page</a>
 ```
 
-**Real output from my machine:**
+**What is on this page (your checklist):**
+
+| Element | Text / value | We use it for |
+|---------|--------------|---------------|
+| `<title>` | `Shopping App` | `toHaveTitle` |
+| `<h1>` | `Welcome Amit` | `toBeVisible`, `toHaveText` |
+| `<p>` | `Your order has been placed successfully.` | `toContainText` |
+| `<li>` × 2 | `Apple`, `Banana` | `toHaveCount` |
+| hidden div | `Secret Admin Panel` | shows `toBeVisible` FAIL |
+| address | `.../site/index.html` | `toHaveURL` |
+
+### Login page — `site/login.html`
+
+Simple form: email + password + Login button.  
+On submit → jumps to `dashboard.html` (no real server).
+
+### Dashboard page — `site/dashboard.html`
+
+```html
+<title>Dashboard — Shopping App</title>
+<h1>Welcome Amit</h1>
+<button class="logout-btn">Logout</button>
+```
+
+**Why local file?** No internet needed. Playwright opens:
+
+```text
+file:///home/amit/Desktop/playwright-course/topic-01-playwright-basics/site/index.html
+```
+
+Set once in config as `baseURL` → tests just write `page.goto('index.html')`.
+
+---
+
+## 4. Installation
+
+### Prerequisites (your machine)
+
+```bash
+node --version
+npm --version
+```
+
+**Real output:**
 
 ```text
 v24.19.0
 11.17.0
 ```
 
-### 3.2 Step-by-step install (run these 3 commands)
+### Install (3 commands)
 
 ```bash
-# Step 1: enter the topic folder
 cd topic-01-playwright-basics
-
-# Step 2: install the Playwright test library
 npm install
-
-# Step 3: download the Chromium browser (one-time)
 npx playwright install chromium
 ```
 
-**What each command does:**
-
-| Command | What it does | Like ordering... |
-|---------|--------------|------------------|
-| `npm install` | Reads `package.json`, downloads `@playwright/test` into `node_modules/` | Ordering the tool kit |
-| `npx playwright install chromium` | Downloads the actual browser binary (~150 MB) | Ordering the machine the tool runs on |
+| Command | What it does |
+|---------|--------------|
+| `npm install` | downloads the Playwright library |
+| `npx playwright install chromium` | downloads the real browser (one-time) |
 
 **Real output — `npm install`:**
 
@@ -138,404 +170,641 @@ added 3 packages, and audited 4 packages in 3s
 found 0 vulnerabilities
 ```
 
-**Real output — `npx playwright --version`:**
+**Real output — version:**
 
 ```text
+$ npx playwright --version
 Version 1.63.0
 ```
 
-**Real output — `npm ls @playwright/test`:**
-
-```text
-playwright-basics-topic-01@1.0.0 /home/amit/Desktop/playwright-course/topic-01-playwright-basics
-└── @playwright/test@1.63.0
-```
-
-> **Remember:** `npm install` once per project. `playwright install chromium` once per machine (or when Playwright version upgrades).
-
 ---
 
-## 4. Project Structure
+## 5. Project structure
 
 ```text
 topic-01-playwright-basics/
 │
-├── package.json            # project name + "type": "module" + dependencies
-├── package-lock.json       # exact versions (auto-generated, do not edit)
-├── playwright.config.js    # settings (ES6: import/export)
-├── .gitignore              # files Git should ignore
+├── package.json            # "type": "module" + scripts
+├── playwright.config.js    # baseURL → our local site/
+├── .gitignore
 │
-└── tests/                  # ALL test files live here
-    ├── 01-first-test.spec.js        # syntax: anatomy of one test
-    ├── 02-running-tests.spec.js     # running: multiple tests in one run
-    └── 03-assertions.spec.js        # expect: all assertion types
+├── site/                   # ★ our tiny Shopping App website
+│   ├── index.html          #   home (h1, p, list, title)
+│   ├── login.html          #   fake login form
+│   └── dashboard.html      #   after login
+│
+└── tests/
+    ├── 01-first-test.spec.js      # anatomy of one test
+    ├── 02-running-tests.spec.js   # several small tests
+    └── 03-assertions.spec.js      # every matcher explained
 ```
 
-### 4.1 `package.json` — line by line
-
-```json
-{
-  "name": "playwright-basics-topic-01",   // project name (only a label)
-  "version": "1.0.0",                     // your project's version
-  "type": "module",                       // ★ ES6: enable import/export in all .js files
-  "scripts": {                            // shortcuts: "npm run test" == "playwright test"
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:report": "playwright show-report"
-  },
-  "devDependencies": {                    // tools needed ONLY for development/testing
-    "@playwright/test": "^1.63.0"         // the Playwright library, version 1.63+
-  }
-}
-```
-
-### 4.2 `playwright.config.js` — line by line (ES6)
+### `playwright.config.js` — line by line (ES6)
 
 ```js
-// ES6: import instead of require
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
-// defineConfig → wraps your config object with default settings
-// devices      → pre-made browser profiles (screen size, user agent...)
 
-// ES6: export default instead of module.exports
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// __dirname = folder of this config file (ES6 has no built-in __dirname)
+
 export default defineConfig({
-  testDir: './tests',          // WHERE to look for test files (relative to this file)
-  timeout: 30000,              // each test fails if it takes longer than 30 000 ms (30 s)
-  fullyParallel: true,         // run tests at the same time — each test is isolated
-  retries: 0,                  // do NOT re-run failed tests (set 1 or 2 in CI later)
-  reporter: 'list',            // output format: simple checklist in terminal
+  testDir: './tests',              // look for tests inside tests/
+  timeout: 30000,                  // fail any test after 30 seconds
+  fullyParallel: true,             // run tests together (each has own page)
+  retries: 0,                      // do not re-run failures
+  reporter: 'list',                // nice checklist in terminal
 
-  use: {                       // DEFAULT settings applied to every test
-    baseURL: 'https://example.com',  // page.goto('/') means https://example.com/
-    trace: 'on-first-retry',         // record a debug trace if a retry fails
+  use: {
+    // file:// URL of site/  (trailing slash is important!)
+    // page.goto('index.html')  →  file:///.../site/index.html
+    baseURL: `file://${path.join(__dirname, 'site')}/`,
   },
 
-  projects: [                  // which browsers to test on
+  projects: [
     {
-      name: 'chromium',        // label shown in the report
-      use: { ...devices['Desktop Chrome'] },  // 1280x720 Chrome-like profile
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 });
 ```
 
-**Key idea — `baseURL`:**
+**baseURL in one picture:**
 
 ```text
-  page.goto('/')   +   baseURL: 'https://example.com'
-                     --------------------------------
-  actually opens  -->  https://example.com/
+  page.goto('index.html')   +   baseURL = file:///.../site/
+                                --------------------------------
+  browser actually opens  -->  file:///.../site/index.html
 ```
-
-This keeps tests short and lets you change the domain in ONE place only.
 
 ---
 
-## 5. How a Test Runs (flow diagram)
+## 6. How a test runs
 
 ```text
 npx playwright test
         |
         v
-  Playwright reads playwright.config.js
+  read playwright.config.js  (find baseURL, testDir)
         |
         v
-  Finds every *.spec.js inside tests/
+  collect every tests/*.spec.js
         |
         v
-  For each test('name', fn):
+  for each test('name', fn):
         |
-        +-- creates a fresh Browser
-        +-- creates a fresh Page  <-- "page" fixture
-        +-- runs your async function
-        |       |
-        |       +-- page.goto(...)     navigate
-        |       +-- getByRole(...)     find element (lazy - nothing happens yet)
-        |       +-- expect(...).to...  check + auto-wait up to 5 s
+        +-- open browser (chromium)
+        +-- open a fresh page     ← "page" fixture
+        +-- page.goto('index.html')
+        +-- locator  = WHERE
+        +-- expect   = WHAT must be true
         |
-        +-- PASS?  green ✓   /   FAIL? red ✘ + error message
-        +-- closes page & browser
+        +-- PASS ✓  or  FAIL ✘ (Expected vs Received)
+        +-- close page
         |
         v
-  Final summary:  "11 passed (3.6s)"
+  summary:  "15 passed (3.3s)"
 ```
 
 ---
 
-## 6. Running Tests
-
-### 6.1 Commands
+## 7. Running tests
 
 | Command | What it does |
 |---------|--------------|
-| `npx playwright test` | Run ALL tests |
-| `npx playwright test tests/01-first-test.spec.js` | Run ONE file |
-| `npx playwright test -g "exact text"` | Run tests whose name contains "exact text" |
-| `npm run test:headed` | Run while WATCHING the browser (learning mode) |
-| `npm run test:report` | Open the HTML report in your browser |
+| `npx playwright test` | run ALL tests |
+| `npx playwright test tests/01-first-test.spec.js` | run ONE file |
+| `npx playwright test -g "login"` | run tests with "login" in the name |
+| `npm run test:headed` | watch the browser live |
+| `npm run test:report` | open HTML report |
 
-### 6.2 Real output — run ONE file
-
-```bash
-npx playwright test tests/01-first-test.spec.js
-```
+### Real output — one file
 
 ```text
+$ npx playwright test tests/01-first-test.spec.js
+
 Running 1 test using 1 worker
 
-  ✓  1 [chromium] › tests/01-first-test.spec.js:18:1 › page loads and shows Example Domain heading (1.2s)
+  ✓  1 [chromium] › tests/01-first-test.spec.js:9:1 › Shopping App home page loads with welcome heading (444ms)
 
-  1 passed (2.7s)
+  1 passed (2.6s)
 ```
 
-**How to read this:**
-
-| Part | Meaning |
-|------|---------|
-| `Running 1 test using 1 worker` | 1 test, 1 browser window working on it |
-| `✓` | passed |
-| `[chromium]` | which browser project ran it |
-| `tests/01-first-test.spec.js:18:1` | file **line : column** — jump there in your editor |
-| `(1.2s)` | how long it took |
-| `1 passed (2.7s)` | summary |
-
-### 6.3 Real output — run ALL tests (the moment of truth)
-
-```bash
-npx playwright test
-```
+### Real output — all tests
 
 ```text
-Running 11 tests using 6 workers
+$ npx playwright test
 
-  ✓   4 [chromium] › tests/02-running-tests.spec.js:26:1 › third check: body has readable paragraph (824ms)
-  ✓   1 [chromium] › tests/01-first-test.spec.js:18:1 › page loads and shows Example Domain heading (940ms)
-  ✓   3 [chromium] › tests/02-running-tests.spec.js:12:1 › first check: title contains Example (1.1s)
-  ✓   2 [chromium] › tests/03-assertions.spec.js:27:3 › web-first assertions (auto-retry) › assert exact text (1.1s)
-  ✓   5 [chromium] › tests/02-running-tests.spec.js:20:1 › second check: page URL is correct (1.1s)
-  ✓   6 [chromium] › tests/03-assertions.spec.js:20:3 › web-first assertions (auto-retry) › assert element visibility (1.0s)
-  ✓   7 [chromium] › tests/03-assertions.spec.js:33:3 › web-first assertions (auto-retry) › assert text contains substring (RegExp) (682ms)
-  ✓   8 [chromium] › tests/03-assertions.spec.js:39:3 › web-first assertions (auto-retry) › assert element count (711ms)
-  ✓  10 [chromium] › tests/03-assertions.spec.js:57:3 › generic assertions (no retry) › assert plain values with toBe / toContain (609ms)
-  ✓  11 [chromium] › tests/03-assertions.spec.js:45:3 › web-first assertions (auto-retry) › assert page URL (667ms)
-  ✓   9 [chromium] › tests/03-assertions.spec.js:50:3 › web-first assertions (auto-retry) › assert page title (776ms)
+Running 15 tests using 6 workers
 
-  11 passed (3.6s)
+  ✓   3 [chromium] › tests/03-assertions.spec.js:20:3 › web-first (auto-retry) › toBeVisible — can I see the heading? (784ms)
+  ✓   1 [chromium] › tests/02-running-tests.spec.js:11:1 › tab title is Shopping App (822ms)
+  ✓   2 [chromium] › tests/02-running-tests.spec.js:17:1 › we are on the home page URL (917ms)
+  ✓   6 [chromium] › tests/01-first-test.spec.js:9:1 › Shopping App home page loads with welcome heading (730ms)
+  ✓   5 [chromium] › tests/02-running-tests.spec.js:29:1 › order message contains the word order (711ms)
+  ✓   4 [chromium] › tests/02-running-tests.spec.js:23:1 › fruits list has exactly 2 items (763ms)
+  ✓   7 [chromium] › tests/03-assertions.spec.js:30:3 › web-first (auto-retry) › toHaveText — exact full text (305ms)
+  ✓   9 [chromium] › tests/03-assertions.spec.js:46:3 › web-first (auto-retry) › toHaveCount — how many elements? (244ms)
+  ✓   8 [chromium] › tests/03-assertions.spec.js:37:3 › web-first (auto-retry) › toContainText — piece of text inside (306ms)
+  ✓  14 [chromium] › tests/03-assertions.spec.js:99:3 › generic (no retry) › toContain — string and array (6ms)
+  ✓  10 [chromium] › tests/03-assertions.spec.js:53:3 › web-first (auto-retry) › toHaveURL — where is the browser? (301ms)
+  ✓  15 [chromium] › tests/03-assertions.spec.js:109:3 › generic (no retry) › toBeTruthy — is the value not empty? (6ms)
+  ✓  11 [chromium] › tests/03-assertions.spec.js:59:3 › web-first (auto-retry) › toHaveTitle — what is on the tab? (282ms)
+  ✓  13 [chromium] › tests/03-assertions.spec.js:87:3 › generic (no retry) › toBe — strict === comparison (155ms)
+  ✓  12 [chromium] › tests/03-assertions.spec.js:64:3 › web-first (auto-retry) › real flow: login → dashboard (URL + text + visible) (453ms)
+
+  15 passed (3.3s)
 ```
 
-> **Note:** numbers like `✓ 4` may appear out of order because 6 workers run tests **in parallel** — whoever finishes first is printed first. All 11 still ran.
+**How to read one line:**
+
+```text
+✓  6  [chromium]  ›  tests/01-first-test.spec.js:9:1  ›  Shopping App home page...  (730ms)
+│    │              │                │                     │                        │
+│    │              │                │                     │                        └ how long
+│    │              │                │                     └ test name (story language)
+│    │              │                └ file : line : column  (click to jump in editor)
+│    │              └ which browser
+│    └ passed
+└ green check = PASS
+```
 
 ---
 
-## 7. Test Files and Syntax
+## 8. Test files and syntax
 
-**File naming rule:** only files ending in `.spec.js` (or `.test.js`) are treated as tests.
+**Rule:** only files ending in `.spec.js` are tests.
 
 ```text
-tests/01-first-test.spec.js   <-- collected ✅
-tests/helper.js               <-- NOT a test  (ignored)
+tests/01-first-test.spec.js   ✅ collected
+tests/helper.js               ❌ ignored (not a test)
 ```
 
-### 7.1 Anatomy of one test (ES6)
+### Anatomy of ONE test (open the file while reading)
 
 ```js
-// File: tests/01-first-test.spec.js   (open this file while reading!)
+// tests/01-first-test.spec.js
 
 import { test, expect } from '@playwright/test';
-//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^ LINE A — ES6 import (not require)
-//  test   = function that creates/registers a test case
-//  expect = function that checks (asserts) something
-//  import { a, b } from 'pkg'  is the modern way to load a library
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^ ES6 import (not require)
+//  test   = create a test
+//  expect = check something
 
-test('page loads and shows Example Domain heading', async ({ page }) => {
-//  ^^^^ LINE B — test #1 begins
-//  'page loads...' = the NAME you will see in the report. Write it like a story.
-//  async  = this function uses "await", so it MUST be async
-//  ({ page }) = "destructure": pull `page` out of the object Playwright passes in
-//               Playwright gives you a brand-new page for THIS test only
+test('Shopping App home page loads with welcome heading', async ({ page }) => {
+//  ^^^ story-style name you will see in the report
+//  async + { page } = Playwright gives a fresh page for THIS test
 
-  await page.goto('/');
-//  ^^^^ LINE C — go to the website
-//  await = pause until navigation finishes
-//  '/'   + baseURL in config = https://example.com/
+  await page.goto('index.html');
+  // open our local home page (baseURL handles the file:// path)
 
-  const heading = page.getByRole('heading', { level: 1 });
-//  ^^^^ LINE D — FIND the <h1> element (by semantic role, not CSS)
-//  Nothing is searched yet! Locators are LAZY — they only run when an
-//  action or assertion uses them. That lets Playwright re-search later
-//  (auto-retry) instead of grabbing a stale element.
+  const heading = page.locator('h1');
+  // WHERE: find the <h1>. Lazy — does nothing until we assert.
 
   await expect(heading).toBeVisible();
-//  ^^^^ LINE E — ASSERTION #1: is it visible on screen?
-//  expect(...)   = "I expect..."
-//  .toBeVisible() = "...this element to be visible"
-//  await = Playwright retries for up to 5 seconds if not yet visible
+  // WHAT: "Can I see it?"  → human check
 
-  await expect(heading).toHaveText('Example Domain');
-//  ^^^^ LINE F — ASSERTION #2: does it show EXACTLY this text?
-//  Full-string match. Extra/missing space = FAIL.
+  await expect(heading).toHaveText('Welcome Amit');
+  // WHAT: "Is the text exactly Welcome Amit?" → human check
 });
-// end of test
 ```
 
-### 7.2 The mental model (memorize this)
+### The mental model (memorize)
 
 ```text
-   LOCATOR  -->  WHERE is the element?   page.getByRole / page.locator
+   LOCATOR  -->  WHERE?    page.locator('h1')
       |
       v
- ASSERTION -->  WHAT must be true?       expect(locator).toBeVisible()
+ ASSERTION -->  WHAT?     expect(heading).toBeVisible()
 ```
 
-You always need **both**. A locator alone does nothing. An assertion without a locator has nothing to check.
-
-### 7.3 Other 2 test files (same pattern, more examples)
-
-| File | What it teaches |
-|------|-----------------|
-| `tests/02-running-tests.spec.js` | multiple `test()` in one file; title / URL / RegExp checks |
-| `tests/03-assertions.spec.js` | every common `expect` style, grouped with `test.describe` |
-
-`test.describe` explained in one line:
-
-```js
-test.describe('web-first assertions (auto-retry)', () => {
-  // purely a FOLDER for the report — tests inside still run independently
-  test('assert element visibility', async ({ page }) => { /* ... */ });
-  test('assert exact text', async ({ page }) => { /* ... */ });
-});
-```
+You always need **both**.
 
 ---
 
-## 8. Assertions (expect)
+## 9. Assertions (expect) — matcher by matcher
 
-An **assertion** is the only line that can **pass or fail** your test.  
-Everything else (goto, locator) is preparation.
+> An assertion is the only line that can **pass or fail**.
 
-### 8.1 Two flavors — the #1 thing to remember
+### Two flavors (very important)
 
 ```text
-┌─────────────────────────────┬──────────────────────────────────────┐
-│  WEB-FIRST (async, retry)   │  GENERIC (sync, no retry)           │
-│  expect(locator).toHaveText │  expect(someValue).toBe(...)        │
-│  expect(page).toHaveURL     │                                      │
-│                              │                                      │
-│  • auto-retries ~5 seconds   │  • checks ONCE, immediately          │
-│  • for PAGE ELEMENTS         │  • for: page.title(), variables,     │
-│  • you MUST await it         │    API JSON, numbers                 │
-│                              │  • no await needed                   │
-└─────────────────────────────┴──────────────────────────────────────┘
-         ^^^ USE THESE MOST                      ^^^ USE FOR PLAIN DATA
+┌──────────────────────────────┬─────────────────────────────────────┐
+│ WEB-FIRST (page elements)    │ GENERIC (plain JavaScript values)  │
+│ expect(locator).toHaveText   │ expect(someValue).toBe(...)        │
+│ expect(page).toHaveURL       │                                     │
+│                              │                                     │
+│ • you MUST await             │ • no await                          │
+│ • auto-retries ~5 seconds    │ • checks ONCE                       │
+└──────────────────────────────┴─────────────────────────────────────┘
 ```
-
-Why retry? Web pages load slowly. An element may appear 2 seconds later — the retry absorbs that. A plain string from `page.title()` has no "later"; either you fetched it or not.
-
-### 8.2 Assertion catalog (all in `tests/03-assertions.spec.js`)
-
-| Assertion | Checks | Retry? | Example |
-|-----------|--------|--------|---------|
-| `toBeVisible()` | element shown | ✅ | `expect(h1).toBeVisible()` |
-| `toHaveText('...')` | exact full text | ✅ | `expect(h1).toHaveText('Example Domain')` |
-| `toContainText(/.../)` | substring / RegExp | ✅ | `expect(body).toContainText(/Example/)` |
-| `toHaveCount(n)` | number of matches | ✅ | `expect(h1).toHaveCount(1)` |
-| `toHaveURL('...')` | final address | ✅ | `expect(page).toHaveURL('https://example.com/')` |
-| `toHaveTitle('...')` | `<title>` content | ✅ | `expect(page).toHaveTitle('Example Domain')` |
-| `toBe(...)` | strict `===` | ❌ | `expect(title).toBe('Example Domain')` |
-| `toContain(...)` | substring in string/array | ❌ | `expect(title).toContain('Example')` |
-| `toBeTruthy()` | value is not empty/false/null | ❌ | `expect(url).toBeTruthy()` |
-
-### 8.3 Code — web-first (ES6 copy of `03-assertions.spec.js` core)
-
-```js
-import { test, expect } from '@playwright/test';
-
-test('assert exact text', async ({ page }) => {
-  await page.goto('/');
-  // EXACT match of the <h1> visible text. Retries up to 5s.
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Example Domain');
-});
-
-test('assert text contains substring (RegExp)', async ({ page }) => {
-  await page.goto('/');
-  // /Example/ is a RegExp → PARTIAL match anywhere in the text.
-  await expect(page.locator('body')).toContainText(/Example/);
-});
-
-test('assert page title', async ({ page }) => {
-  await page.goto('/');              // ← never skip this!
-  await expect(page).toHaveTitle('Example Domain');
-});
-```
-
-### 8.4 Code — generic (no retry)
-
-```js
-test('assert plain values with toBe / toContain', async ({ page }) => {
-  await page.goto('/');
-
-  const title = await page.title();    // plain JS string — already "here", no waiting
-  expect(title).toBe('Example Domain'); // === comparison
-  expect(title).toContain('Example');   // substring
-  expect(typeof title).toBe('string');  // sanity check on the type
-
-  const url = page.url();
-  expect(url).toBeTruthy();             // URL is non-empty
-});
-```
-
-**Notice:** no `await` before generic `expect(...)` — because there is nothing to wait for.
 
 ---
 
-## 9. What a Failing Test Looks Like
+### 9.1 `toBeVisible()` — can I see it?
 
-On one run during this topic, a test failed because **I forgot `page.goto('/')`**.  
-This is a real, unedited failure — learning to read this is half the skill:
+**Checks:** is the element actually shown on screen?
+
+Page:
+
+```html
+<h1>Welcome Amit</h1>
+```
+
+Test:
+
+```js
+const heading = page.locator('h1');
+await expect(heading).toBeVisible();
+```
+
+**Human check:** *"Can I see the heading?"* → yes ✅ **PASS**
+
+If hidden:
+
+```html
+<h1 style="display:none">Welcome Amit</h1>
+```
+
+```js
+await expect(page.locator('h1')).toBeVisible();  // ❌ FAIL
+```
+
+**Real failure from my machine:**
 
 ```text
-  ✘  10 [chromium] › tests/03-assertions.spec.js:50:3 › web-first assertions (auto-retry) › assert page title (5.1s)
+Error: expect(locator).toBeVisible() failed
 
-  1) [chromium] › tests/03-assertions.spec.js:50:3 › web-first assertions (auto-retry) › assert page title
-
-    Error: expect(page).toHaveTitle(expected) failed
-
-    Expected: "Example Domain"
-    Received: ""
-    Timeout:  5000ms
-
-    Call log:
-      - Expect "toHaveTitle" with timeout 5000ms
-        14 × locator resolved to <html>…</html>
-           - unexpected value ""
-
-      49 |
-      50 |   test('assert page title', async ({ page }) => {
-    > 51 |     await expect(page).toHaveTitle('Example Domain');
-         |                        ^
-      52 |   });
-
-  1 failed
-  10 passed (7.8s)
+Locator:  locator('.hidden-secret')
+Expected: visible
+Received: hidden
 ```
 
-**Reading the failure in 5 seconds:**
-
-| Clue | What it tells you |
-|------|-------------------|
-| `Expected: "Example Domain"` | what YOUR test wanted |
-| `Received: ""` | page title is EMPTY |
-| `14 × locator resolved to <html>` | browser opened, but no navigation happened |
-| Root cause | forgot `await page.goto('/')` |
-| Fix | add `await page.goto('/')` before the assertion |
-
-After the fix → **11 passed**. Failure is normal; the error message tells you exactly where to look.
-
-*(An earlier real failure also showed example.com changing its paragraph text — same skill: read Expected vs Received.)*
+`Expected: visible` / `Received: hidden` — now you know instantly.
 
 ---
 
-## 10. Command Cheat Sheet
+### 9.2 `toHaveText('...')` — exact full text
+
+**Checks:** the text is **exactly** what you wrote (no more, no less).
+
+Page:
+
+```html
+<h1>Welcome Amit</h1>
+```
+
+Test:
+
+```js
+await expect(page.locator('h1')).toHaveText('Welcome Amit');  // ✅ PASS
+```
+
+Because text matches **exactly**.
+
+Wrong:
+
+```js
+await expect(page.locator('h1')).toHaveText('Welcome');  // ❌ FAIL
+```
+
+Because actual text is `Welcome Amit`, not `Welcome`.
+
+**Real failure from my machine:**
+
+```text
+Error: expect(locator).toHaveText(expected) failed
+
+Locator:  locator('h1')
+Expected: "Welcome"
+Received: "Welcome Amit"
+```
+
+| | |
+|--|--|
+| `toHaveText('Welcome Amit')` | ✅ full match |
+| `toHaveText('Welcome')` | ❌ too short — must be complete text |
+
+---
+
+### 9.3 `toContainText('...')` — piece of text inside
+
+**Checks:** some words **exist somewhere** inside a bigger text.
+
+Page:
+
+```html
+<p>Your order has been placed successfully.</p>
+```
+
+Test:
+
+```js
+await expect(page.locator('p')).toContainText('order');  // ✅ PASS
+```
+
+Because:
+
+```text
+Your order has been placed successfully.
+        ^^^^^ contains "order"
+```
+
+Also works with RegExp:
+
+```js
+await expect(page.locator('p')).toContainText(/success/i);  // ✅ PASS
+```
+
+`i` = ignore case (`SUCCESS`, `Success`, `success` all OK).
+
+#### Difference (very important)
+
+```js
+// EXACT full sentence needed
+toHaveText('Your order has been placed successfully.')
+
+// only a piece needed
+toContainText('order')
+```
+
+```text
+  toHaveText     =  full sentence must match 100%
+  toContainText  =  a few letters/words found inside = enough
+```
+
+---
+
+### 9.4 `toHaveCount(n)` — how many matches?
+
+Page:
+
+```html
+<li>Apple</li>
+<li>Banana</li>
+```
+
+Test:
+
+```js
+await expect(page.locator('li')).toHaveCount(2);  // ✅ PASS
+```
+
+Because there are **2** `<li>` elements.
+
+```js
+await expect(page.locator('li')).toHaveCount(3);  // ❌ FAIL
+```
+
+Only 2 exist.
+
+**Human check:** *"How many items does my locator match right now?"*
+
+---
+
+### 9.5 `toHaveURL('...')` — where is the browser?
+
+Suppose browser is on:
+
+```text
+file:///.../site/login.html
+```
+
+Test:
+
+```js
+await expect(page).toHaveURL(/login\.html/);  // ✅ PASS
+```
+
+Wrong:
+
+```js
+await expect(page).toHaveURL(/dashboard\.html/);  // ❌ FAIL
+```
+
+Current page is login, not dashboard.
+
+**Human check:** *"What address is in the address bar?"*
+
+Tip: for local files the full URL contains your computer path, so we often use a **RegExp** like `/login\.html/` instead of the whole path.
+
+---
+
+### 9.6 `toHaveTitle('...')` — browser tab name
+
+HTML:
+
+```html
+<title>Shopping App</title>
+```
+
+Test:
+
+```js
+await expect(page).toHaveTitle('Shopping App');  // ✅ PASS
+```
+
+**Human check:** *"What name is on the browser tab?"*
+
+---
+
+### 9.7 `toBe(...)` — strict `===` (NOT for locators)
+
+This compares **normal JavaScript values**.
+
+```js
+const name = 'Amit';
+expect(name).toBe('Amit');     // ✅ PASS
+
+const age = 38;
+expect(age).toBe(38);          // ✅ PASS
+expect(age).toBe('38');        // ❌ FAIL
+```
+
+Why FAIL?
+
+```text
+38 === "38"   is   false
+
+number and string are different types
+```
+
+**Human check:** *"Is this value exactly equal (===) to that value?"*
+
+---
+
+### 9.8 `toContain(...)` — string and array
+
+**String example:**
+
+```js
+const title = 'Shopping App';
+
+expect(title).toContain('Shopping');  // ✅ PASS
+expect(title).toContain('Amazon');    // ❌ FAIL
+```
+
+**Array example:**
+
+```js
+const fruits = ['Apple', 'Banana', 'Mango'];
+
+expect(fruits).toContain('Banana');   // ✅ PASS
+expect(fruits).toContain('Orange');   // ❌ FAIL
+```
+
+**Human check:** *"Is this piece inside the string / array?"*
+
+Note: `toContain` is **generic** (no retry). For page text use `toContainText` (with retry).
+
+---
+
+### 9.9 `toBeTruthy()` — is the value not empty?
+
+**Truthy (passes) values:** `true`, `1`, `"hello"`, `[]`, `{}`
+
+```js
+const loggedIn = true;
+expect(loggedIn).toBeTruthy();   // ✅ PASS
+
+const username = 'Amit';
+expect(username).toBeTruthy();   // ✅ PASS
+```
+
+**Falsy (fails) values:** `false`, `0`, `""`, `null`, `undefined`, `NaN`
+
+```js
+const username = '';
+expect(username).toBeTruthy();   // ❌ FAIL — empty string is falsy
+```
+
+**Human check:** *"Is there actually something here (not empty/false/nothing)?"*
+
+---
+
+### Quick table — all matchers
+
+| Matcher | Human question | Retry? | On |
+|---------|----------------|--------|-----|
+| `toBeVisible()` | Can I see it? | ✅ | element |
+| `toHaveText('...')` | Exact full text? | ✅ | element |
+| `toContainText('...')` | Piece of text inside? | ✅ | element |
+| `toHaveCount(n)` | How many matches? | ✅ | locator |
+| `toHaveURL('...')` | What address bar? | ✅ | page |
+| `toHaveTitle('...')` | What tab name? | ✅ | page |
+| `toBe(...)` | Exactly equal `===`? | ❌ | plain value |
+| `toContain(...)` | Piece in string/array? | ❌ | plain value |
+| `toBeTruthy()` | Not empty / not false? | ❌ | plain value |
+
+---
+
+## 10. Real login example
+
+Our `site/login.html` → click Login → `site/dashboard.html`.
+
+```js
+await page.goto('login.html');
+
+await page.fill('#email', 'amit@gmail.com');
+await page.fill('#password', '123456');
+await page.click('button[type="submit"]');
+
+// Did login redirect to dashboard?  → toHaveURL
+await expect(page).toHaveURL(/dashboard\.html/);
+
+// Is heading exactly "Welcome Amit"? → toHaveText
+await expect(page.locator('h1')).toHaveText('Welcome Amit');
+
+// Is logout button visible?         → toBeVisible
+await expect(page.locator('.logout-btn')).toBeVisible();
+```
+
+Here you check 3 things after login:
+
+| Question | Matcher |
+|----------|---------|
+| Did we land on dashboard? | `toHaveURL()` |
+| Heading exactly right? | `toHaveText()` |
+| Logout button showing? | `toBeVisible()` |
+
+**This test is in the project and PASSED** (see real output below — name: `real flow: login → dashboard`).
+
+---
+
+## 11. What a failing test looks like (real)
+
+I ran 2 temporary tests that **should fail**, to show you the real messages.
+
+### Fail 1 — wrong exact text
+
+```text
+Error: expect(locator).toHaveText(expected) failed
+
+Locator:  locator('h1')
+Expected: "Welcome"
+Received: "Welcome Amit"
+Timeout:  5000ms
+```
+
+| Clue | Meaning |
+|------|---------|
+| `Expected: "Welcome"` | what the test wanted |
+| `Received: "Welcome Amit"` | what the page really shows |
+| Fix | write the full text, or use `toContainText('Welcome')` |
+
+### Fail 2 — hidden element
+
+```text
+Error: expect(locator).toBeVisible() failed
+
+Locator:  locator('.hidden-secret')
+Expected: visible
+Received: hidden
+```
+
+| Clue | Meaning |
+|------|---------|
+| `Received: hidden` | element exists but `display:none` |
+| Fix | remove the hide, or pick a different element |
+
+**Rule:** always read **Expected** vs **Received** first. The answer is usually right there.
+
+---
+
+## 12. Which matcher should I use?
+
+### Learn these 3 first (you will use them every day)
+
+```js
+await expect(locator).toBeVisible();     // is it there on screen?
+await expect(locator).toHaveText('...');  // is the text exact?
+await expect(page).toHaveURL('...');      // did we navigate right?
+```
+
+### Then learn these 2
+
+```js
+await expect(locator).toContainText('...');  // partial text
+await expect(locator).toHaveCount(2);        // how many
+```
+
+### The rest are standard JavaScript checks
+
+```js
+expect(value).toBe(...);        // ===
+expect(value).toContain(...);   // piece in string/array
+expect(value).toBeTruthy();     // not empty
+```
+
+```text
+  PAGE checks  →  await + auto-retry     (toBeVisible, toHaveText, toHaveURL ...)
+  VALUE checks →  no await, once         (toBe, toContain, toBeTruthy)
+```
+
+---
+
+## 13. Command cheat sheet
 
 | I want to... | Command |
 |--------------|---------|
@@ -543,16 +812,15 @@ After the fix → **11 passed**. Failure is normal; the error message tells you 
 | Install browser | `npx playwright install chromium` |
 | Run all tests | `npx playwright test` |
 | Run one file | `npx playwright test tests/01-first-test.spec.js` |
-| Run by name | `npx playwright test -g "exact text"` |
-| Watch the browser | `npm run test:headed` |
-| Open HTML report | `npm run test:report` |
-| Update browsers (later) | `npx playwright install` |
+| Run by name | `npx playwright test -g "login"` |
+| Watch browser | `npm run test:headed` |
+| Open report | `npm run test:report` |
 
 ---
 
-## 11. Real Full Output
+## 14. Real full output
 
-Everything below was captured by running the commands **on this machine** with the **ES6** code.
+Captured on this machine with the Shopping App (ES6 code).
 
 ### Environment
 
@@ -576,57 +844,62 @@ added 3 packages, and audited 4 packages in 3s
 found 0 vulnerabilities
 ```
 
-### Project files (real `find` output)
+### Project files
 
 ```text
-.
 ./package.json
 ./playwright.config.js
-./tests
+./site/index.html
+./site/login.html
+./site/dashboard.html
 ./tests/01-first-test.spec.js
 ./tests/02-running-tests.spec.js
 ./tests/03-assertions.spec.js
 ```
 
-### Final test run — `npx playwright test`
+### Final run — `npx playwright test`
 
 ```text
-Running 11 tests using 6 workers
+Running 15 tests using 6 workers
 
-  ✓   4 [chromium] › tests/02-running-tests.spec.js:26:1 › third check: body has readable paragraph (824ms)
-  ✓   1 [chromium] › tests/01-first-test.spec.js:18:1 › page loads and shows Example Domain heading (940ms)
-  ✓   3 [chromium] › tests/02-running-tests.spec.js:12:1 › first check: title contains Example (1.1s)
-  ✓   2 [chromium] › tests/03-assertions.spec.js:27:3 › web-first assertions (auto-retry) › assert exact text (1.1s)
-  ✓   5 [chromium] › tests/02-running-tests.spec.js:20:1 › second check: page URL is correct (1.1s)
-  ✓   6 [chromium] › tests/03-assertions.spec.js:20:3 › web-first assertions (auto-retry) › assert element visibility (1.0s)
-  ✓   7 [chromium] › tests/03-assertions.spec.js:33:3 › web-first assertions (auto-retry) › assert text contains substring (RegExp) (682ms)
-  ✓   8 [chromium] › tests/03-assertions.spec.js:39:3 › web-first assertions (auto-retry) › assert element count (711ms)
-  ✓  10 [chromium] › tests/03-assertions.spec.js:57:3 › generic assertions (no retry) › assert plain values with toBe / toContain (609ms)
-  ✓  11 [chromium] › tests/03-assertions.spec.js:45:3 › web-first assertions (auto-retry) › assert page URL (667ms)
-  ✓   9 [chromium] › tests/03-assertions.spec.js:50:3 › web-first assertions (auto-retry) › assert page title (776ms)
+  ✓   3 [chromium] › tests/03-assertions.spec.js:20:3 › web-first (auto-retry) › toBeVisible — can I see the heading? (784ms)
+  ✓   1 [chromium] › tests/02-running-tests.spec.js:11:1 › tab title is Shopping App (822ms)
+  ✓   2 [chromium] › tests/02-running-tests.spec.js:17:1 › we are on the home page URL (917ms)
+  ✓   6 [chromium] › tests/01-first-test.spec.js:9:1 › Shopping App home page loads with welcome heading (730ms)
+  ✓   5 [chromium] › tests/02-running-tests.spec.js:29:1 › order message contains the word order (711ms)
+  ✓   4 [chromium] › tests/02-running-tests.spec.js:23:1 › fruits list has exactly 2 items (763ms)
+  ✓   7 [chromium] › tests/03-assertions.spec.js:30:3 › web-first (auto-retry) › toHaveText — exact full text (305ms)
+  ✓   9 [chromium] › tests/03-assertions.spec.js:46:3 › web-first (auto-retry) › toHaveCount — how many elements? (244ms)
+  ✓   8 [chromium] › tests/03-assertions.spec.js:37:3 › web-first (auto-retry) › toContainText — piece of text inside (306ms)
+  ✓  14 [chromium] › tests/03-assertions.spec.js:99:3 › generic (no retry) › toContain — string and array (6ms)
+  ✓  10 [chromium] › tests/03-assertions.spec.js:53:3 › web-first (auto-retry) › toHaveURL — where is the browser? (301ms)
+  ✓  15 [chromium] › tests/03-assertions.spec.js:109:3 › generic (no retry) › toBeTruthy — is the value not empty? (6ms)
+  ✓  11 [chromium] › tests/03-assertions.spec.js:59:3 › web-first (auto-retry) › toHaveTitle — what is on the tab? (282ms)
+  ✓  13 [chromium] › tests/03-assertions.spec.js:87:3 › generic (no retry) › toBe — strict === comparison (155ms)
+  ✓  12 [chromium] › tests/03-assertions.spec.js:64:3 › web-first (auto-retry) › real flow: login → dashboard (URL + text + visible) (453ms)
 
-  11 passed (3.6s)
+  15 passed (3.3s)
 ```
 
 ---
 
-## Quick Self-Check (answer in your head)
+## Quick self-check
 
-1. Which 2 things does every test file import? → `test`, `expect`
-2. Which keyword loads them in ES6? → `import` (not `require`)
-3. What line in `package.json` enables ES6? → `"type": "module"`
-4. What does `await page.goto('/')` open when `baseURL` is set? → `https://example.com/`
-5. Which assertion auto-retries for ~5 s? → web-first ones (`toHaveText`, `toBeVisible`, ...)
-6. Which assertion checks a plain string with no retry? → `expect(value).toBe(...)`
+1. Our test website lives in which folder? → `site/`
+2. Which matcher = "Can I see it?"? → `toBeVisible()`
+3. Which matcher = exact full text? → `toHaveText('...')`
+4. Which matcher = a piece of text inside? → `toContainText('...')`
+5. `toHaveText('Welcome')` vs page text `Welcome Amit` → PASS or FAIL? → **FAIL**
+6. Which 3 matchers should you learn first? → `toBeVisible`, `toHaveText`, `toHaveURL`
 
-If you answered all 6 → Topic 1 done ✅
-
----
-
-## Next Topic
-
-**Topic 2 — Locators** (`page.getByRole`, `getByTestId`, `locator`, chained locators) — coming soon.
+All 6 → Topic 1 done ✅
 
 ---
 
-*Topic 1 · Playwright Basics · ES6 JavaScript · Real output: 11 passed (3.6s) · Playwright 1.63.0*
+## Next topic
+
+**Topic 2 — Locators** (`locator`, `getByRole`, `getByText`, chaining) — coming soon.
+
+---
+
+*Topic 1 · Playwright Basics · Shopping App · ES6 · Real output: 15 passed (3.3s) · Playwright 1.63.0*

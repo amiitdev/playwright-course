@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; }
+    h1 { color: #2c7be5; }
+    .success { color: #12a150; }
+    .hidden-secret { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Main heading — used for toBeVisible / toHaveText -->
+  <h1>Welcome Amit</h1>
+
+  <!-- Order message — used for toContainText -->
+  <p class="success">Your order has been placed successfully.</p>
+
+  <!-- Fruits list — used for toHaveCount -->
+  <ul>
+    <li>Apple</li>
+    <li>Banana</li>
+  </ul>
+
+  <!-- Hidden element — used to show what FAILS toBeVisible -->
+  <div class="hidden-secret">Secret Admin Panel</div>
+
+  <p><a href="login.html">Go to Login Page</a></p>
+</body>
+</html>

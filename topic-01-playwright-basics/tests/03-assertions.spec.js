@@ -1,72 +1,119 @@
 // tests/03-assertions.spec.js
 // ============================================================
-// LESSON: Assertions (expect) — the most important skill
-// ES6 JavaScript — import / export
+// LESSON: every matcher, one by one, on the Shopping App
+// ES6: import / export
 // ============================================================
 //
-// Mental model:
-//   locator   = "WHERE is the element?"   page.getByRole / page.locator
-//   assertion = "WHAT should be true?"    expect(...).toBeVisible()
+//   locator   = WHERE is the element?    page.locator('h1')
+//   assertion = WHAT must be true?       expect(...).toBeVisible()
 //
-// Two flavors:
-//   1) Web-first (async, auto-retry)  → for PAGE ELEMENTS.  You await them.
-//   2) Generic   (sync, no retry)     → for plain values.   No await.
+//   WEB-FIRST (await + auto-retry ~5s) → page elements
+//   GENERIC   (no await, once)         → plain JS values
 
 import { test, expect } from '@playwright/test';
 
-test.describe('web-first assertions (auto-retry)', () => {
-  // test.describe('group') — only organizes the report. No effect on execution.
+// ------------------------------------------------------------
+// A) WEB-FIRST assertions (for page elements) — ALWAYS await
+// ------------------------------------------------------------
+test.describe('web-first (auto-retry)', () => {
 
-  test('assert element visibility', async ({ page }) => {
-    await page.goto('/');
-    const heading = page.getByRole('heading', { level: 1 });
-    // exists + non-zero size + not hidden
-    await expect(heading).toBeVisible();
+  test('toBeVisible — can I see the heading?', async ({ page }) => {
+    await page.goto('index.html');
+    // <h1>Welcome Amit</h1> is on screen → PASS
+    await expect(page.locator('h1')).toBeVisible();
+
+    // The hidden <h1 class="hidden-secret"> exists in HTML but
+    // style="display:none" → NOT visible → this would FAIL:
+    // await expect(page.locator('.hidden-secret')).toBeVisible();
   });
 
-  test('assert exact text', async ({ page }) => {
-    await page.goto('/');
-    // EXACT full-string match of innerText (trimmed)
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Example Domain');
+  test('toHaveText — exact full text', async ({ page }) => {
+    await page.goto('index.html');
+    // exact match "Welcome Amit" → PASS
+    await expect(page.locator('h1')).toHaveText('Welcome Amit');
+    // "Welcome" alone would FAIL (not the full text)
   });
 
-  test('assert text contains substring (RegExp)', async ({ page }) => {
-    await page.goto('/');
-    // /Example/ is a RegExp → substring match anywhere in the text
-    await expect(page.locator('body')).toContainText(/Example/);
+  test('toContainText — piece of text inside', async ({ page }) => {
+    await page.goto('index.html');
+    // full: "Your order has been placed successfully."
+    // we only need the word "order" → PASS
+    await expect(page.locator('p.success')).toContainText('order');
+    // RegExp + i (ignore case) also works:
+    await expect(page.locator('p.success')).toContainText(/SUCCESS/i);
   });
 
-  test('assert element count', async ({ page }) => {
-    await page.goto('/');
-    // how many elements the locator matches right now (example.com has one <h1>)
-    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  test('toHaveCount — how many elements?', async ({ page }) => {
+    await page.goto('index.html');
+    // <li>Apple</li> + <li>Banana</li> = 2 → PASS
+    // toHaveCount(3) would FAIL
+    await expect(page.locator('li')).toHaveCount(2);
   });
 
-  test('assert page URL', async ({ page }) => {
-    await page.goto('/');
-    await expect(page).toHaveURL('https://example.com/');
+  test('toHaveURL — where is the browser?', async ({ page }) => {
+    await page.goto('login.html');
+    // human: "Does the address bar say login.html?"
+    await expect(page).toHaveURL(/login\.html/);
   });
 
-  test('assert page title', async ({ page }) => {
-    await page.goto('/');
-    await expect(page).toHaveTitle('Example Domain');
+  test('toHaveTitle — what is on the tab?', async ({ page }) => {
+    await page.goto('index.html');
+    await expect(page).toHaveTitle('Shopping App');
+  });
+
+  test('real flow: login → dashboard (URL + text + visible)', async ({ page }) => {
+    await page.goto('login.html');
+
+    await page.fill('#email', 'amit@gmail.com');
+    await page.fill('#password', '123456');
+    await page.click('button[type="submit"]');
+
+    // 1) Did we land on dashboard?          → toHaveURL
+    await expect(page).toHaveURL(/dashboard\.html/);
+
+    // 2) Is heading EXACTLY "Welcome Amit"? → toHaveText
+    await expect(page.locator('h1')).toHaveText('Welcome Amit');
+
+    // 3) Is Logout button showing?          → toBeVisible
+    await expect(page.locator('.logout-btn')).toBeVisible();
   });
 });
 
-test.describe('generic assertions (no retry)', () => {
-  test('assert plain values with toBe / toContain', async ({ page }) => {
-    await page.goto('/');
+// ------------------------------------------------------------
+// B) GENERIC assertions (plain JavaScript values) — no await
+// ------------------------------------------------------------
+test.describe('generic (no retry)', () => {
 
-    // --- toBe: strict equality (===) on a normal JS string ---
-    const title = await page.title();
-    expect(title).toBe('Example Domain'); // full equality
-    expect(title).toContain('Example');    // substring
+  test('toBe — strict === comparison', async ({ page }) => {
+    await page.goto('index.html');
 
-    // --- toBeTruthy: not empty / null / undefined / false ---
-    const url = page.url();
-    expect(url).toBeTruthy();
+    const title = await page.title();       // "Shopping App"
+    expect(title).toBe('Shopping App');     // string === string → PASS
+    // expect(title).toBe('Shopping');      // would FAIL: not exact
 
-    // --- typeof check: confirm we really got a string ---
-    expect(typeof title).toBe('string');
+    const count = 2;
+    expect(count).toBe(2);                  // number === number → PASS
+    // expect(count).toBe('2');             // would FAIL: 2 !== "2"
+  });
+
+  test('toContain — string and array', async () => {
+    const title = 'Shopping App';
+    expect(title).toContain('Shopping');    // string has this piece → PASS
+    // expect(title).toContain('Amazon');   // would FAIL
+
+    const fruits = ['Apple', 'Banana', 'Mango'];
+    expect(fruits).toContain('Banana');     // in the array → PASS
+    // expect(fruits).toContain('Orange');  // would FAIL
+  });
+
+  test('toBeTruthy — is the value not empty?', async () => {
+    const loggedIn = true;
+    expect(loggedIn).toBeTruthy();          // true → PASS
+
+    const username = 'Amit';
+    expect(username).toBeTruthy();          // non-empty string → PASS
+
+    // const empty = '';
+    // expect(empty).toBeTruthy();          // "" is FALSY → would FAIL
   });
 });

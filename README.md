@@ -4,6 +4,7 @@ Hello! This is my Playwright course.
 One topic at a time. Each topic has:
 
 - A folder with **working code** — **modern ES6 JavaScript** (`import` / `export`)
+- A tiny **local website** to test (simple, practical — not random internet sites)
 - A **README.md** with theory, line-by-line explanations, ASCII diagrams, and **real terminal output**
 
 ---

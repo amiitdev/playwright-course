@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; max-width: 320px; }
+    label { display: block; margin-top: 12px; }
+    input { width: 100%; padding: 8px; margin-top: 4px; }
+    button { margin-top: 16px; padding: 8px 16px; }
+  </style>
+</head>
+<body>
+  <h1>Login</h1>
+
+  <form id="login-form">
+    <label>Email
+      <input id="email" type="email" placeholder="amit@gmail.com" />
+    </label>
+    <label>Password
+      <input id="password" type="password" placeholder="123456" />
+    </label>
+    <button type="submit">Login</button>
+  </form>
+
+  <script>
+    // Fake login: no server — just jump to dashboard.html
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

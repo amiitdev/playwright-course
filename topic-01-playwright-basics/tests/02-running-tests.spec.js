@@ -1,33 +1,33 @@
 // tests/02-running-tests.spec.js
 // ============================================================
-// LESSON: How running tests works (multiple tests, independent)
-// ES6 JavaScript — import / export
+// LESSON: several small tests in one run — Shopping App
+// ES6: import / export
 // ============================================================
 
 import { test, expect } from '@playwright/test';
 
-// Playwright runs every test() you define — no "main" function needed.
-// Each test gets its OWN page → tests never share state.
+// Each test gets its OWN page → they never share state.
 
-test('first check: title contains Example', async ({ page }) => {
-  await page.goto('/');
-  // page.title() → string inside <title>...</title>
-  const title = await page.title();
-  // toBe(...) → strict equality (===). No retry.
-  expect(title).toBe('Example Domain');
+test('tab title is Shopping App', async ({ page }) => {
+  await page.goto('index.html');
+  // human: "What name is on the browser tab?"
+  await expect(page).toHaveTitle('Shopping App');
 });
 
-test('second check: page URL is correct', async ({ page }) => {
-  await page.goto('/');
-  // page.url() / toHaveURL → final address after navigation. Auto-retry.
-  await expect(page).toHaveURL('https://example.com/');
+test('we are on the home page URL', async ({ page }) => {
+  await page.goto('index.html');
+  // human: "Is the address bar pointing at index.html?"
+  await expect(page).toHaveURL(/index\.html/);
 });
 
-test('third check: body has readable paragraph', async ({ page }) => {
-  await page.goto('/');
-  // locator('p') = CSS selector → ALL <p> tags
-  // .first()      = take only the first match
-  const paragraph = page.locator('p').first();
-  // toHaveText(/.../) with a RegExp = PARTIAL match (not full equality).
-  await expect(paragraph).toHaveText(/documentation examples/);
+test('fruits list has exactly 2 items', async ({ page }) => {
+  await page.goto('index.html');
+  // human: "How many <li> are in the list?" → Apple, Banana = 2
+  await expect(page.locator('li')).toHaveCount(2);
+});
+
+test('order message contains the word order', async ({ page }) => {
+  await page.goto('index.html');
+  // human: "Does this paragraph mention my order somewhere inside?"
+  await expect(page.locator('p.success')).toContainText('order');
 });
