@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin: 14px 0; }
+    #status { font-weight: bold; }
+    .ok { color: #12a150; }
+    .no { color: #c0392b; }
+    #secret { display: none; background: #eaf2ff; padding: 10px; border-radius: 6px; }
+    button { padding: 8px 14px; cursor: pointer; }
+    .muted { color: #777; }
+  </style>
+</head>
+<body>
+  <h1>Dashboard</h1>
+
+  <nav>
+    <a href="/login.html">Login</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/profile.html">Profile</a>
+  </nav>
+
+  <div class="box">
+    <p>Session status: <span id="status" data-testid="status">checking…</span></p>
+    <p>User: <span id="user" data-testid="user">—</span></p>
+    <p class="muted" id="storage-user" data-testid="storage-user"></p>
+    <button id="load-secret" type="button">Load secret (API)</button>
+    <button id="logout-btn" type="button">Logout</button>
+    <div id="secret" data-testid="secret"></div>
+  </div>
+
+  <script>
+    async function refresh() {
+      const status = document.getElementById('status');
+      const user = document.getElementById('user');
+      try {
+        const res = await fetch('/api/me');
+        if (!res.ok) throw new Error('no session');
+        const me = await res.json();
+        status.textContent = 'logged in';
+        status.className = 'ok';
+        user.textContent = me.email;
+      } catch {
+        status.textContent = 'not logged in';
+        status.className = 'no';
+        user.textContent = '—';
+      }
+
+      const raw = localStorage.getItem('user');
+      document.getElementById('storage-user').textContent = raw
+        ? 'localStorage user: ' + raw
+        : 'localStorage user: empty';
+    }
+
+    document.getElementById('load-secret').addEventListener('click', async () => {
+      const box = document.getElementById('secret');
+      const res = await fetch('/api/secret');
+      if (!res.ok) {
+        box.style.display = 'block';
+        box.textContent = '401 — log in first';
+        return;
+      }
+      const data = await res.json();
+      box.style.display = 'block';
+      box.textContent = data.secret;
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      localStorage.removeItem('user');
+      window.location.href = '/login.html';
+    });
+
+    refresh();
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profile — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin: 14px 0; }
+    #profile-email { color: #2c7be5; font-weight: bold; }
+    .muted { color: #777; }
+    #need-login { display: none; color: #c0392b; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Profile</h1>
+
+  <nav>
+    <a href="/login.html">Login</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/profile.html">Profile</a>
+  </nav>
+
+  <div class="box">
+    <p id="need-login" data-testid="need-login">Please log in first.</p>
+    <p>Email: <span id="profile-email" data-testid="profile-email">—</span></p>
+    <p class="muted">Protected page — uses same session cookie as dashboard.</p>
+  </div>
+
+  <script>
+    fetch('/api/me')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((me) => {
+        document.getElementById('profile-email').textContent = me.email;
+      })
+      .catch(() => {
+        document.getElementById('need-login').style.display = 'block';
+      });
+  </script>
+</body>
+</html>

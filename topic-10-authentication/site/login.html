@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; max-width: 340px; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 8px 16px; cursor: pointer; }
+    #error { color: #c0392b; display: none; font-weight: bold; }
+    .muted { color: #777; font-size: 14px; }
+    a { color: #2c7be5; }
+  </style>
+</head>
+<body>
+  <h1>Login</h1>
+  <p class="muted">Demo account: amit@gmail.com / 123456</p>
+
+  <form id="login-form">
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="username" />
+
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password" />
+
+    <p id="error" data-testid="login-error">Invalid email or password</p>
+    <button id="login-btn" type="submit">Sign in</button>
+  </form>
+
+  <p class="muted"><a href="/dashboard.html">Try dashboard (needs session)</a></p>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const error = document.getElementById('error');
+
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        error.style.display = 'block';
+        return;
+      }
+
+      const data = await res.json();
+      // session cookie set by server (HttpOnly) + save name in localStorage
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = '/dashboard.html';
+    });
+  </script>
+</body>
+</html>

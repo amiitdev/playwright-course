@@ -1,0 +1,15 @@
+{
+  "name": "playwright-authentication-topic-10",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 10 - Authentication: login flows, session, cookies, storage state",
+  "scripts": {
+    "test": "playwright test",
+    "server": "node server.js",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
