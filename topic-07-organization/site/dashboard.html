@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin: 14px 0; }
+    #user-email { color: #2c7be5; font-weight: bold; }
+    #logout { padding: 6px 12px; cursor: pointer; }
+    .success { color: #12a150; font-weight: bold; }
+    #welcome-msg { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <p data-testid="user-email" id="user-email">not logged in</p>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="orders.html">Orders</a>
+    <a href="settings.html">Settings</a>
+  </nav>
+
+  <div class="box">
+    <h2>Welcome panel</h2>
+    <p id="welcome-msg" class="success">You are signed in.</p>
+    <button id="logout" type="button">Logout</button>
+  </div>
+
+  <div class="box">
+    <h2>Cart summary</h2>
+    <ul id="cart">
+      <li>Apple ×1</li>
+      <li>Banana ×2</li>
+    </ul>
+  </div>
+
+  <script>
+    // read email from localStorage if login stored it
+    const email = localStorage.getItem('email');
+    if (email) {
+      document.getElementById('user-email').textContent = email;
+      document.getElementById('welcome-msg').style.display = 'block';
+    }
+
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('email');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

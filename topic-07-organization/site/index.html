@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Home — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .product { border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin: 10px 0; }
+    button { padding: 6px 12px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Shopping App</h1>
+  <p>Organize tests with hooks, fixtures, groups, and tags.</p>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="login.html">Login</a>
+    <a href="dashboard.html">Dashboard</a>
+  </nav>
+
+  <div class="product" data-sku="A1"><strong>Apple</strong> — $1
+    <button class="add" type="button">Add</button>
+  </div>
+  <div class="product" data-sku="B2"><strong>Banana</strong> — $2
+    <button class="add" type="button">Add</button>
+  </div>
+
+  <p id="cart-count">Cart: 0</p>
+
+  <script>
+    let count = 0;
+    document.querySelectorAll('.add').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        count += 1;
+        document.getElementById('cart-count').textContent = 'Cart: ' + count;
+      });
+    });
+  </script>
+</body>
+</html>

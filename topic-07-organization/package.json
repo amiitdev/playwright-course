@@ -1,0 +1,16 @@
+{
+  "name": "playwright-organization-topic-07",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 7 - Test Organization: hooks, fixtures, grouping, tags",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
