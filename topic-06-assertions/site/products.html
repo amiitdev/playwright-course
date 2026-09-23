@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Products — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .product { border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin: 10px 0; }
+    #sort-info { color: #2c7be5; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Products</h1>
+  <p id="sort-info">Sort: default</p>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="checkout.html">Checkout</a>
+  </nav>
+
+  <div class="product" data-sku="A1"><strong>Apple</strong> — $1</div>
+  <div class="product" data-sku="B2"><strong>Banana</strong> — $2</div>
+  <div class="product" data-sku="M3"><strong>Mango</strong> — $3</div>
+
+  <script>
+    // read ?sort= from URL and show it (for URL validation demos)
+    const params = new URLSearchParams(window.location.search);
+    const sort = params.get('sort');
+    if (sort) {
+      document.getElementById('sort-info').textContent = 'Sort: ' + sort;
+      document.title = 'Products — sort=' + sort;
+    }
+  </script>
+</body>
+</html>

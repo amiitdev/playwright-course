@@ -1,0 +1,14 @@
+{
+  "name": "playwright-assertions-topic-06",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 6 - Assertions: text, URL, visibility, element state checks",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

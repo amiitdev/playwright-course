@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopping App — Assertions</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 680px; }
+    nav a { margin-right: 14px; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin: 14px 0; }
+    .hidden-box { display: none; }
+    .muted { color: #777; }
+    .success { color: #12a150; font-weight: bold; }
+    .error { color: #c0392b; }
+    button { padding: 8px 14px; cursor: pointer; margin: 4px; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.primary { background: #2c7be5; color: white; border: none; }
+    input, select { padding: 6px; margin: 4px 0; width: 260px; }
+    ul { list-style: square; }
+    #status { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Welcome Amit</h1>
+  <p data-testid="tagline">Your order has been placed successfully.</p>
+  <p class="muted">We ship apples and bananas every day.</p>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="products.html?sort=price">Products (sorted)</a>
+    <a href="index.html#footer">Home #footer</a>
+    <a href="checkout.html">Checkout</a>
+  </nav>
+
+  <!-- ===== TEXT ===== -->
+  <div class="box">
+    <h2>Text validation</h2>
+    <p id="success-msg" class="success">Order confirmed!</p>
+    <p id="order-id">Order ID: ORD-10024</p>
+    <span id="price">$42.00</span>
+    <ul id="cart-list">
+      <li>Apple ×2</li>
+      <li>Banana ×1</li>
+      <li>Mango ×3</li>
+    </ul>
+  </div>
+
+  <!-- ===== VISIBILITY ===== -->
+  <div class="box">
+    <h2>Visibility checks</h2>
+    <div id="visible-box" data-testid="visible-box">I am visible</div>
+    <div id="hidden-box" class="hidden-box">I am hidden</div>
+    <div id="empty-box" style="visibility: hidden">I have visibility:hidden</div>
+    <p id="status">status: idle</p>
+    <button id="show-btn" type="button">Show message</button>
+    <p id="flash-msg" class="hidden-box success">Message is now visible!</p>
+  </div>
+
+  <!-- ===== ELEMENT STATE ===== -->
+  <div class="box">
+    <h2>Element state checks</h2>
+
+    <button id="save-btn" class="primary" type="button">Save</button>
+    <button id="delete-btn" type="button" disabled>Delete (disabled)</button>
+
+    <label><input type="checkbox" id="agree" checked /> I agree to terms</label>
+    <label><input type="checkbox" id="newsletter" /> Subscribe to newsletter</label>
+
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@example.com" />
+
+    <label for="locked">Locked field</label>
+    <input id="locked" type="text" value="read only value" readonly />
+
+    <label for="name">Full name (focus this)</label>
+    <input id="name" type="text" placeholder="Click then assert focus" />
+
+    <label for="qty">Quantity</label>
+    <input id="qty" type="number" value="5" min="1" max="99" />
+
+    <p class="muted">Tab order: email → locked → name → qty</p>
+  </div>
+
+  <footer id="footer">
+    <p>© Shopping App — footer target for hash URL</p>
+  </footer>
+
+  <script>
+    document.getElementById('show-btn').addEventListener('click', () => {
+      document.getElementById('flash-msg').classList.remove('hidden-box');
+      document.getElementById('status').textContent = 'status: shown';
+    });
+  </script>
+</body>
+</html>

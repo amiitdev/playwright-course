@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Checkout — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 480px; }
+    nav a { margin-right: 14px; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin: 14px 0; }
+    button { padding: 8px 14px; cursor: pointer; }
+    #done { display: none; color: #12a150; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Checkout</h1>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="checkout.html">Checkout</a>
+  </nav>
+
+  <div class="box">
+    <p id="step">Step 1 of 2 — enter details</p>
+    <button id="pay-btn" type="button">Pay now</button>
+    <p id="done">Payment successful! Thank you.</p>
+  </div>
+
+  <script>
+    document.getElementById('pay-btn').addEventListener('click', () => {
+      document.getElementById('step').textContent = 'Step 2 of 2 — complete';
+      document.getElementById('done').style.display = 'block';
+      document.getElementById('pay-btn').disabled = true;
+    });
+  </script>
+</body>
+</html>
