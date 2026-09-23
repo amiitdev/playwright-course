@@ -1,0 +1,15 @@
+{
+  "name": "playwright-api-testing-topic-09",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 9 - API Testing: GET/POST/PUT/PATCH/DELETE, auth tokens, API assertions",
+  "scripts": {
+    "test": "playwright test",
+    "server": "node server.js",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

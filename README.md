@@ -21,7 +21,8 @@ One topic at a time. Each topic has:
 | 6 | [Assertions](./topic-06-assertions/README.md) | `topic-06-assertions/` | ✅ Done |
 | 7 | [Test Organization](./topic-07-organization/README.md) | `topic-07-organization/` | ✅ Done |
 | 8 | [Page Object Model](./topic-08-pom/README.md) | `topic-08-pom/` | ✅ Done |
-| 9 | CI/CD with GitHub Actions (coming soon) | `topic-09-cicd/` | ⏳ |
+| 9 | [API Testing](./topic-09-api-testing/README.md) | `topic-09-api-testing/` | ✅ Done |
+| 10 | CI/CD with GitHub Actions (coming soon) | `topic-10-cicd/` | ⏳ |
 
 ---
 
@@ -122,6 +123,13 @@ npx playwright install chromium
 npx playwright test
 ```
 
+```bash
+cd topic-09-api-testing
+npm install
+npx playwright install chromium
+npx playwright test
+```
+
 ---
 
-*Last updated: Topic 8 — Page Object Model (16 passed · 3 smoke)*
+*Last updated: Topic 9 — API Testing (38 passed)*
