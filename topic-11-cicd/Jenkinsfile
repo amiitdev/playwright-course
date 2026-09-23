@@ -1,0 +1,96 @@
+// Jenkinsfile — declarative pipeline for Playwright tests
+// Place at repo root as: Jenkinsfile
+//
+// Pipeline stages:
+//   1. Checkout
+//   2. npm ci
+//   3. Install browsers
+//   4. Run tests (list + html + junit)
+//   5. Publish JUnit results
+//   6. Archive HTML report
+
+pipeline {
+  agent any
+
+  // Use a Node tool defined in Jenkins (or docker agent — see Dockerfile)
+  tools {
+    nodejs 'Node20'   // must match a Node installation name in Jenkins
+  }
+
+  options {
+    timeout(time: 30, unit: 'MINUTES')
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+  }
+
+  environment {
+    CI = 'true'
+    PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/.playwright-browsers"
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Install dependencies') {
+      steps {
+        dir('topic-11-cicd') {
+          sh 'npm ci'
+        }
+      }
+    }
+
+    stage('Install browsers') {
+      steps {
+        dir('topic-11-cicd') {
+          sh 'npx playwright install --with-deps chromium'
+        }
+      }
+    }
+
+    stage('Run tests') {
+      steps {
+        dir('topic-11-cicd') {
+          // junit writes test-results/junit.xml for Jenkins
+          sh 'npx playwright test --reporter=list,html,junit'
+        }
+      }
+      post {
+        always {
+          dir('topic-11-cicd') {
+            // Jenkins test result publisher (needs JUnit plugin)
+            junit testResults: 'test-results/junit.xml',
+                  allowEmptyResults: false,
+                  skipPublishingChecks: false
+
+            // keep HTML report on the Jenkins server
+            publishHTML(target: [
+              allowMissing: false,
+              alwaysLinkToLastBuild: true,
+              keepAll: true,
+              reportDir: 'playwright-report',
+              reportFiles: 'index.html',
+              reportName: 'Playwright HTML Report'
+            ])
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    failure {
+      echo 'Tests failed — open Playwright HTML Report from the build page.'
+    }
+    success {
+      echo 'All Playwright tests passed.'
+    }
+    always {
+      // clean workspace browsers cache optional — commented to speed rebuilds
+      // cleanWs()
+    }
+  }
+}

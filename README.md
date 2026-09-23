@@ -23,7 +23,7 @@ One topic at a time. Each topic has:
 | 8 | [Page Object Model](./topic-08-pom/README.md) | `topic-08-pom/` | ✅ Done |
 | 9 | [API Testing](./topic-09-api-testing/README.md) | `topic-09-api-testing/` | ✅ Done |
 | 10 | [Authentication](./topic-10-authentication/README.md) | `topic-10-authentication/` | ✅ Done |
-| 11 | CI/CD with GitHub Actions (coming soon) | `topic-11-cicd/` | ⏳ |
+| 11 | [CI/CD Integration](./topic-11-cicd/README.md) | `topic-11-cicd/` | ✅ Done |
 
 ---
 
@@ -138,6 +138,14 @@ npx playwright install chromium
 npx playwright test
 ```
 
+```bash
+cd topic-11-cicd
+npm install
+npx playwright install chromium
+npx playwright test --reporter=list,html,junit
+npx playwright show-report
+```
+
 ---
 
-*Last updated: Topic 10 — Authentication (23 passed)*
+*Last updated: Topic 11 — CI/CD Integration (8 passed local + 8 Docker) — **course Topics 1–11 complete***

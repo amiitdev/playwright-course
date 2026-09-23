@@ -1,0 +1,6 @@
+# CI artifacts — do not commit large reports / results
+playwright-report/
+test-results/
+blob-report/
+node_modules/
+.playwright/

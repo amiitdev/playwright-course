@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CI Shop — Home</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .product { border: 1px solid #ccc; border-radius: 8px; padding: 12px; margin: 12px 0; }
+    button { padding: 6px 12px; cursor: pointer; }
+    #cart-count { font-weight: bold; color: #c0392b; }
+  </style>
+</head>
+<body>
+  <h1>CI Shop</h1>
+  <p>Small app used by Topic 11 CI/CD tests.</p>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="login.html">Login</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <div class="product" data-sku="APPLE">
+    <strong>Apple</strong> — $1
+    <button class="add" type="button">Add</button>
+  </div>
+  <div class="product" data-sku="BANANA">
+    <strong>Banana</strong> — $2
+    <button class="add" type="button">Add</button>
+  </div>
+
+  <p id="cart-count">Cart: 0</p>
+
+  <script>
+    let n = 0;
+    document.querySelectorAll('.add').forEach((b) => {
+      b.addEventListener('click', () => {
+        n += 1;
+        document.getElementById('cart-count').textContent = 'Cart: ' + n;
+      });
+    });
+  </script>
+</body>
+</html>

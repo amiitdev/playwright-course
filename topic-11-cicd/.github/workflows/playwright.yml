@@ -1,0 +1,104 @@
+# ============================================================
+# GitHub Actions — run Playwright tests on every push / PR
+# File location on GitHub:  .github/workflows/playwright.yml
+# (copy this file from topic-11-cicd/.github/workflows/ to repo root)
+# ============================================================
+
+name: Playwright Tests
+
+# WHEN it runs
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # manual "Run workflow" button
+
+# Give Actions permission to post check results
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  # ---- job 1: fast smoke on every push ----
+  smoke:
+    name: Smoke tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: topic-11-cicd   # our project folder
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: topic-11-cicd/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke tests
+        run: npx playwright test --grep @smoke
+        env:
+          CI: "true"
+
+      - name: Upload HTML report (smoke)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-smoke
+          path: topic-11-cicd/playwright-report
+          retention-days: 7
+
+  # ---- job 2: full suite ----
+  full:
+    name: Full test suite
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: topic-11-cicd
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: topic-11-cicd/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run all tests (list + html + junit)
+        run: npx playwright test --reporter=list,html,junit
+        env:
+          CI: "true"
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-full
+          path: topic-11-cicd/playwright-report
+          retention-days: 14
+
+      - name: Upload JUnit XML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-results
+          path: topic-11-cicd/test-results/junit.xml
+          retention-days: 14

@@ -1,0 +1,16 @@
+{
+  "name": "playwright-cicd-topic-11",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 11 - CI/CD: GitHub Actions, Jenkins, Docker, test reports",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+    "test:ci": "playwright test --reporter=list,html,junit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

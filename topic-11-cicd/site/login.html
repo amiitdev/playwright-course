@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login — CI Shop</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; max-width: 320px; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 8px 16px; cursor: pointer; }
+    #error { color: #c0392b; display: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Login</h1>
+  <form id="f">
+    <label for="email">Email</label>
+    <input id="email" type="email" />
+    <label for="password">Password</label>
+    <input id="password" type="password" />
+    <p id="error" data-testid="error">Invalid credentials</p>
+    <button id="login" type="submit">Sign in</button>
+  </form>
+  <p><a href="index.html">← Home</a></p>
+  <script>
+    document.getElementById('f').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const em = document.getElementById('email').value;
+      const pw = document.getElementById('password').value;
+      if (em === 'ci@test.com' && pw === 'secret12') {
+        localStorage.setItem('user', em);
+        window.location.href = 'index.html';
+      } else {
+        document.getElementById('error').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

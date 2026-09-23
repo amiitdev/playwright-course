@@ -1,0 +1,18 @@
+# docker-compose — run tests and keep the HTML report on your machine
+#
+#   docker compose run --rm tests
+#   then open: ./playwright-report/index.html
+#
+# Or one-off:
+#   docker compose up --abort-on-container-exit
+
+services:
+  tests:
+    build: .
+    image: playwright-cicd:local
+    environment:
+      CI: "true"
+    volumes:
+      # persist reports outside the container
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
