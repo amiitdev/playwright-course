@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Network — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin: 14px 0; }
+    button { padding: 8px 14px; cursor: pointer; }
+    button.primary { background: #2c7be5; color: white; border: none; }
+    #status { color: #777; }
+    #result { color: #12a150; font-weight: bold; display: none; }
+    pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Network Waiting</h1>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/network.html">Network page</a>
+  </nav>
+
+  <div class="box">
+    <h2>Fetch products (slow API ~1s)</h2>
+    <p id="status">Status: idle</p>
+    <button id="fetch-products" class="primary" type="button">Get products</button>
+    <div id="result">Products loaded!</div>
+    <pre id="products-json"></pre>
+  </div>
+
+  <div class="box">
+    <h2>Fetch user (slow API ~1.5s)</h2>
+    <p id="user-status">Status: idle</p>
+    <button id="fetch-user" type="button">Get user</button>
+    <div id="user-box"></div>
+  </div>
+
+  <script>
+    document.getElementById('fetch-products').addEventListener('click', async () => {
+      document.getElementById('status').textContent = 'Status: loading…';
+      document.getElementById('result').style.display = 'none';
+
+      const res = await fetch('/api/products');
+      const data = await res.json();
+
+      document.getElementById('products-json').textContent = JSON.stringify(data, null, 2);
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('status').textContent = 'Status: done';
+    });
+
+    document.getElementById('fetch-user').addEventListener('click', async () => {
+      document.getElementById('user-status').textContent = 'Status: loading…';
+      const res = await fetch('/api/user');
+      const user = await res.json();
+      const box = document.getElementById('user-box');
+      box.style.display = 'block';
+      box.textContent = 'Hello, ' + user.name + '!';
+      document.getElementById('user-status').textContent = 'Status: done';
+    });
+  </script>
+</body>
+</html>

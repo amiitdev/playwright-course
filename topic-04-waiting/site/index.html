@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopping App — Waiting</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .box { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin: 14px 0; }
+    button { padding: 8px 14px; cursor: pointer; margin: 4px; }
+    button.primary { background: #2c7be5; color: white; border: none; }
+    .hidden { display: none; }
+    #loading { color: #c0392b; font-weight: bold; }
+    #products { color: #12a150; margin-top: 8px; }
+    #spinner { color: #777; }
+    #done-msg { color: #12a150; font-weight: bold; display: none; }
+    #user-box { background: #eaf2ff; padding: 10px; border-radius: 6px; display: none; }
+    pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Waiting Demos</h1>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/network.html">Network page</a>
+  </nav>
+
+  <!-- ========== AUTO-WAIT: content appears after delay ========== -->
+  <div class="box">
+    <h2>1. Delayed content (auto-wait)</h2>
+    <p>Click the button. Products appear after <strong>1.5 seconds</strong>.</p>
+    <button id="load-btn" class="primary" type="button">Load products</button>
+    <p id="loading" class="hidden">Loading products…</p>
+    <ul id="products" class="hidden">
+      <li>Apple — $1</li>
+      <li>Banana — $2</li>
+    </ul>
+  </div>
+
+  <!-- ========== EXPLICIT WAIT: spinner then done ========== -->
+  <div class="box">
+    <h2>2. Spinner (explicit wait)</h2>
+    <button id="start-btn" type="button">Start task</button>
+    <span id="spinner" class="hidden">Please wait… working</span>
+    <p id="done-msg">Task finished!</p>
+  </div>
+
+  <!-- ========== ELEMENT DISAPPEARS ========== -->
+  <div class="box">
+    <h2>3. Notification disappears</h2>
+    <button id="notify-btn" type="button">Show toast</button>
+    <div id="toast" class="hidden">Saved successfully!</div>
+  </div>
+
+  <p><a href="/network.html">Next: network waiting page →</a></p>
+
+  <script>
+    // 1) delayed list — appears after 1.5s
+    document.getElementById('load-btn').addEventListener('click', () => {
+      document.getElementById('loading').classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('products').classList.remove('hidden');
+      }, 1500);
+    });
+
+    // 2) spinner — visible while "working", hides when done
+    document.getElementById('start-btn').addEventListener('click', () => {
+      const spinner = document.getElementById('spinner');
+      const done = document.getElementById('done-msg');
+      spinner.classList.remove('hidden');
+      done.style.display = 'none';
+      setTimeout(() => {
+        spinner.classList.add('hidden');
+        done.style.display = 'block';
+      }, 2000);
+    });
+
+    // 3) toast — shows 1 second then disappears
+    document.getElementById('notify-btn').addEventListener('click', () => {
+      const toast = document.getElementById('toast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 1000);
+    });
+  </script>
+</body>
+</html>

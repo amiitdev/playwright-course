@@ -1,0 +1,15 @@
+{
+  "name": "playwright-waiting-topic-04",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 4 - Waiting & Synchronization: auto-wait, explicit waits, elements, network, flaky tests",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+    "server": "node server.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
