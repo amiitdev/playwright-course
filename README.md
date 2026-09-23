@@ -1,0 +1,73 @@
+# Playwright Course — Learn Step by Step
+
+Hello! This is my Playwright course.  
+One topic at a time. Each topic has:
+
+- A folder with **working code** — **modern ES6 JavaScript** (`import` / `export`)
+- A **README.md** with theory, line-by-line explanations, ASCII diagrams, and **real terminal output**
+
+---
+
+## Table of Contents
+
+| # | Topic | Folder | Status |
+|---|-------|--------|--------|
+| 1 | [Playwright Basics](./topic-01-playwright-basics/README.md) | `topic-01-playwright-basics/` | ✅ Done |
+| 2 | Locators (coming soon) | `topic-02-locators/` | ⏳ |
+| 3 | Waiting & Auto-wait (coming soon) | `topic-03-waiting/` | ⏳ |
+| 4 | Page Object Model (coming soon) | `topic-04-pom/` | ⏳ |
+| 5 | Fixtures & Hooks (coming soon) | `topic-05-fixtures/` | ⏳ |
+| 6 | CI/CD with GitHub Actions (coming soon) | `topic-06-cicd/` | ⏳ |
+
+---
+
+## Code Style Rule (all topics)
+
+```js
+// ✅ ES6 — always this
+import { test, expect } from '@playwright/test';
+export default defineConfig({ /* ... */ });
+
+// ❌ CommonJS — never this
+const { test } = require('@playwright/test');
+module.exports = { /* ... */ };
+```
+
+Enabled by `"type": "module"` in every topic's `package.json`.
+
+---
+
+## How To Use This Course
+
+```text
+1. Open a topic folder
+2. Read its README.md top to bottom
+3. Run the code yourself
+4. Compare your output with the "Real Output" section
+5. Move to the next topic
+```
+
+---
+
+## Prerequisites (one-time setup)
+
+| Tool | Check command | My version |
+|------|---------------|------------|
+| Node.js | `node --version` | `v24.19.0` |
+| npm | `npm --version` | `11.17.0` |
+| Git | `git --version` | — |
+
+---
+
+## Quick Start (Topic 1)
+
+```bash
+cd topic-01-playwright-basics
+npm install
+npx playwright install chromium
+npx playwright test
+```
+
+---
+
+*Last updated: Topic 1 — Playwright Basics*

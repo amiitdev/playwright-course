@@ -1,0 +1,14 @@
+{
+  "name": "playwright-basics-topic-01",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 1 - Playwright Basics: installation, structure, running tests, syntax, assertions",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}

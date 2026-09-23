@@ -1,0 +1,7 @@
+# Playwright ignores this file — keeps Git from tracking junk
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+*.log
