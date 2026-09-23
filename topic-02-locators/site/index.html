@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 640px; }
+    nav a { margin-right: 14px; }
+    .product-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 12px 0;
+    }
+    .price { color: #c0392b; font-weight: bold; }
+    .muted { color: #777; }
+    button { padding: 6px 12px; cursor: pointer; }
+    button.primary { background: #2c7be5; color: white; border: none; }
+  </style>
+</head>
+<body>
+  <!-- ONE h1 only — avoids Playwright strict mode issues -->
+  <h1>Welcome Amit</h1>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="form.html">Checkout</a>
+  </nav>
+
+  <h2>Products</h2>
+  <p class="muted">Choose something you like.</p>
+
+  <!-- Product cards — for CSS id/class + role(button) -->
+  <div class="product-card" id="product-apple">
+    <h3>Apple</h3>
+    <span class="price">$1</span>
+    <button type="button">Add to cart</button>
+  </div>
+
+  <div class="product-card" id="product-banana">
+    <h3>Banana</h3>
+    <span class="price">$2</span>
+    <button type="button">Add to cart</button>
+  </div>
+
+  <h2>Your list</h2>
+  <ul id="cart-items">
+    <li>Mango</li>
+    <li>Papaya</li>
+  </ul>
+
+  <button class="primary" type="button">Place order</button>
+</body>
+</html>

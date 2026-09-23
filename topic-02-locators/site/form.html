@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Checkout — Shopping App</title>
+  <style>
+    body { font-family: sans-serif; margin: 32px; max-width: 360px; }
+    label { display: block; margin-top: 14px; font-weight: bold; }
+    input { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+    button { margin-top: 18px; padding: 8px 16px; }
+    .error { color: #c0392b; font-size: 14px; margin-top: 4px; display: none; }
+  </style>
+</head>
+<body>
+  <h1>Checkout</h1>
+  <p class="muted">Fill the form to place your order.</p>
+
+  <form id="checkout-form">
+    <!-- label[for] ↔ input[id]  →  getByLabel works -->
+    <label for="email">Email address</label>
+    <input id="email" name="email" type="email" placeholder="you@example.com" />
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" placeholder="Enter password" />
+
+    <!-- input WITHOUT visible label — only placeholder to find it -->
+    <label for="promo">Promo code (optional)</label>
+    <input id="promo" name="promo" type="text" placeholder="SUMMER10" />
+
+    <label for="qty">Quantity</label>
+    <input id="qty" name="qty" type="number" placeholder="How many?" />
+
+    <button type="submit" class="primary">Place order</button>
+    <p id="msg" class="muted">Safe and simple demo form.</p>
+  </form>
+
+  <script>
+    document.getElementById('checkout-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.getElementById('msg').textContent = 'Order placed! Thank you.';
+      document.getElementById('msg').style.color = '#12a150';
+    });
+  </script>
+</body>
+</html>

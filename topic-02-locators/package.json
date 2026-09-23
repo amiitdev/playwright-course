@@ -1,0 +1,14 @@
+{
+  "name": "playwright-locators-topic-02",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Topic 2 - Locators: getByRole, getByText, getByLabel, getByPlaceholder, CSS, XPath",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
